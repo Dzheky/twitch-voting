@@ -18,7 +18,7 @@ app.get('/:channel', function(req, res) {
         return;
     }
     channel = req.params.channel
-    //res.writeHead(200, {"Content-Type": "text/html"});
+    ////res.writeHead(200, {"Content-Type": "text/html"});
     res.sendFile(__dirname + '/Public/index.html');
      
 });
@@ -33,7 +33,8 @@ io.on('connection', function(socket) {
         }
         data.count = 0;
         running = true;
-        twitch.getClient(req.body.time*1000, channel, function(channel, userstate, message) {
+        twitch.getClient(req.body.time*1000, channel, 'jackfromrussia', process.env.PASSWORD, function(channel, userstate, message) {
+ 
             
             var messageArr = message.split(' ');
             if(messageArr.indexOf(req.body.option) !== -1) {

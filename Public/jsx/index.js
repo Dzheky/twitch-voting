@@ -1,4 +1,4 @@
-
+var url = require('url');
 var socket = io();
 var options = {
         options: {
@@ -9,33 +9,29 @@ var options = {
         }, 
         identity: {
             username: 'jackfromrussia',
-            password: 'oauth:5nyeejp686yfwirfvledivvnmho1ev'
+            password: 'ss'
             
         }, 
-        channels: ['#lirik']
+        channels: []
     }
-var client = tmi.client(options);
-client.connect();
-
-Twitch.init({clientId: 'cunpu7mzq6sedmgw50ekiw7ga4u8npo',
-    redirect_uri: 'https://voting-app-dzheky.c9users.io/'
-}, function(error, status) {
-    if(status.authenticated) {
-        console.log('hello there')
-        $('.twitch-connect').hide();
-    }
-    console.log(status);
+var channel = url.parse(window.location.href).pathname.split('/')[1];
+options.channels.push(channel);
+Twitch.init({clientId: 'cunpu7mzq6sedmgw50ekiw7ga4u8npo', redirect_uri: 'https://voting-app-dzheky.c9users.io/'}, function(error, status) {
     $('.twitch-connect').click(function() {
         Twitch.login({
-            scope: ['user_read', 'channel_read']
+            scope: ['user_read', 'chat_login']
         });
     })
-});
-Twitch.api({method: 'channel'}, function(error, channel) {
-  console.log(channel);
-});
-Twitch.api({method: 'user'}, function(error, user) {
-  console.log(user);
+    console.log(status);
+    if(status.authenticated) {
+        $('.twitch-connect').hide();
+        options.identity.password = 'oauth:'+status.token;
+        Twitch.api({method: 'user'}, function(error, user) {
+            options.identity.username = user.name;
+        });
+        var client = tmi.client(options);
+        client.connect();
+    }
 });
 
 socket.on('option', function(data) {

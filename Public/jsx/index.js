@@ -16,7 +16,7 @@ var options = {
     }
 var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
-Twitch.init({clientId: 'cunpu7mzq6sedmgw50ekiw7ga4u8npo', redirect_uri: 'https://voting-app-dzheky.c9users.io/'}, function(error, status) {
+Twitch.init({clientId: 'cunpu7mzq6sedmgw50ekiw7ga4u8npo', redirect_uri: 'https://voting-app-dzheky.c9users.io'}, function(error, status) {
     $('.twitch-connect').click(function() {
         Twitch.login({
             scope: ['user_read', 'chat_login']

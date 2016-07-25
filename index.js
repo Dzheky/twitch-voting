@@ -10,7 +10,7 @@ var io = require('socket.io')(http);
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.static(process.cwd()+'/Public'));
 var channel = '';
-app.get('/:channel', function(req, res) {
+app.get('/', function(req, res) {
     if (req.params.channel === 'favicon.ico') {
         res.writeHead(200, {'Content-Type': 'image/x-icon'} );
         res.end();
@@ -20,6 +20,17 @@ app.get('/:channel', function(req, res) {
     channel = req.params.channel
     ////res.writeHead(200, {"Content-Type": "text/html"});
     res.sendFile(__dirname + '/Public/index.html');
+})
+app.get('/:channel', function(req, res) {
+    if (req.params.channel === 'favicon.ico') {
+        res.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        res.end();
+        console.log('favicon requested');
+        return;
+    }
+    channel = req.params.channel
+    ////res.writeHead(200, {"Content-Type": "text/html"});
+    res.sendFile(__dirname + '/Public/setPoll.html');
      
 });
 io.on('connection', function(socket) {

@@ -1,6 +1,4 @@
 var express = require("express");
-var twitch = require("./lib/client.js"); //twitch(60000, 'lirik', function(channel, userstate, message) 
-var routing = require('./lib/route.js');
 var bodyParser = require("body-parser");
 var app = express();
 var http = require('http').Server(app);
@@ -10,7 +8,7 @@ var io = require('socket.io')(http);
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.static(process.cwd()+'/Public'));
 var channel = '';
-app.get('/', function(req, res) {
+app.get('*', function(req, res) {
     if (req.params.channel === 'favicon.ico') {
         res.writeHead(200, {'Content-Type': 'image/x-icon'} );
         res.end();

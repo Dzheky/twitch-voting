@@ -17,10 +17,38 @@ var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
 console.log(channel);
 var client = tmi.client(options);
-client.connect();
+//client.connect();
 socket.on('option', function (data) {
     $('#channel').html(data.channel);
     $('#count').html(data.count);
+});
+
+var Option = React.createClass({
+    displayName: 'Option',
+
+    render: function render() {
+        return React.createElement(
+            'div',
+            null,
+            this.props.options.map(function (option) {
+                return React.createElement(
+                    'div',
+                    { key: option.id },
+                    option.content
+                );
+            })
+        );
+    }
+});
+$(document).ready(function () {
+    var content = [];
+    var id = 0;
+    var counter = 0;
+    $("#createPollBtn").on('click', function () {
+        id++;
+        content.push({ id: id, content: "option #" + id });
+        ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
+    });
 });
 
 },{"url":6}],2:[function(require,module,exports){

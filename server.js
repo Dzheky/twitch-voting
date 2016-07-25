@@ -18,8 +18,7 @@ app.get('/', function(req, res) {
         return;
     }
     channel = req.params.channel
-    ////res.writeHead(200, {"Content-Type": "text/html"});
-    res.sendFile(__dirname + '/Public/index.html');
+    res.sendFile(__dirname + '/Public/setPoll.html');
 })
 app.get('/:channel', function(req, res) {
     if (req.params.channel === 'favicon.ico') {

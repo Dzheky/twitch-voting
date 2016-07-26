@@ -12,33 +12,33 @@ var options = {
     }
 var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
-console.log(channel);
 var client = tmi.client(options);
 //client.connect();
 socket.on('option', function(data) {
-    $('#channel').html(data.channel);
-    $('#count').html(data.count);
+    console.log(data);
 })
 
 
-var Option = React.createClass({
-    render: function() {
-        return (
-            <div>
-                {this.props.options.map(function(option) {
-                    return <div key={option.id}>{option.content}</div>
-                })}
-            </div>
-        )
-    }
-});
+const Option = (props) => <div>{props.options.map(function(option) {
+    return <div><input key={option.id} type="text" name={'option'+option.id} placeholder={'option #'+option.id} id={option.elementID}/></div>
+    
+})}</div>;
 $(document).ready(function() {
     var content = [];
-    var id = 0;
-    var counter = 0;
-    $("#createPollBtn").on('click', function() {
+    var id = 1;
+    content.push({id: id, content: "option #"+id, elementID: 'lastOption'});
+    ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));
+    $("#poll").on('focus','#lastOption', function() {
         id++;
-        content.push({id: id, content: "option #"+id});
+        content.push({id: id, content: "option #"+id, elementID: 'option'});
+        content = content.map(function(element) {
+            element.elementID = 'option'
+            if(content.indexOf(element) == content.length-1) {
+                element.elementID = 'lastOption';
+            }
+            return element;
+        })
+        console.log(content);
         ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));
     })
 })

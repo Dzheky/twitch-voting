@@ -5,7 +5,7 @@
     <title>Twitch Voting</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="//cdn.tmijs.org/js/1.1.1/tmi.min.js" integrity="sha384-8Q+qSu52Px9pRIc72XaZ9pFAFWO/bidhybR512f3TwwFKkdwyvF/lVKixrhp4u3h" crossorigin="anonymous"></script>
+    <script src="//cdn.tmijs.org/js/1.1.1/tmi.min.js"></script>
     <script src="https://fb.me/react-15.2.1.js"></script>
     <script src="https://fb.me/react-dom-15.2.1.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
@@ -15,8 +15,8 @@
 <body>
     <div class="container">
         <div class="row">
-            <button type='button' class="btn btn-default" id='createPollBtn'>Create Poll</button>
-            <div class="poll" id='poll'>Options will appear here</div>
+            <div class="poll" id='poll'></div>
+            <button type='button' class="btn btn-default" id='startPoll'>Start Poll</button>
         </div>
     </div>
     <script type="text/javascript" src="js/index.js"></script>

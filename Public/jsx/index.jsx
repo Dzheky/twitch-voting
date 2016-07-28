@@ -26,6 +26,7 @@ const Option = (props) => <div>{props.options.map(function(option) {
 $(document).ready(function() {
     var content = [];
     var listeners = [];
+    var namesOfVoted = [];
     var id = 0;
     var typingTimer;
     var doneTypeingInterval = 100;
@@ -62,7 +63,6 @@ $(document).ready(function() {
       $('.peopleVoted').show();
       $('.option').prop('disabled', true);
       $('#lastOption').parent().hide();
-      content.pop();
       console.log(content);
       for(var i = 0, length = content.length; i < length; i++) {
           listeners.push(content[i].value);
@@ -70,16 +70,25 @@ $(document).ready(function() {
       
       client.connect();
     })
+    $('#stopPoll').click(function() {
+        client.disconnect();
+        listeners = [];
+        $('.option').prop('disabled', false);
+        $('#lastOption').parent().show();
+    });
     client.on('chat', function(channel, userstate, message, self){
         var messageArr = message.split(' ');
-        console.log(messageArr);
-        console.log(listeners);
+        console.log(userstate);
         for(var i = 0, length = listeners.length; i < length; i++) {
             console.log(messageArr.indexOf(listeners[i]))
             if(messageArr.indexOf(listeners[i]) !== -1) {
-                content[i].peopleVoted++;
-                console.log(content);
-                ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));
+                console.log(namesOfVoted, userstate.username);
+                if(namesOfVoted.indexOf(userstate.username) == -1) {
+                    console.log('here');
+                    namesOfVoted.push(userstate.username);
+                    content[i].peopleVoted++;
+                    ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));
+                }
             }
         }
     })

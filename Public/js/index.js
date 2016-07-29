@@ -29,6 +29,11 @@ var Option = function Option(props) {
             return React.createElement(
                 'div',
                 { key: option.id },
+                React.createElement(
+                    'span',
+                    { className: option.elementID, name: option.id, style: { cursor: 'pointer' }, id: 'delete' },
+                    'X  '
+                ),
                 React.createElement('input', { type: 'text', className: 'option', name: option.id, placeholder: 'option #' + option.id, id: option.elementID }),
                 React.createElement(
                     'strong',
@@ -48,11 +53,8 @@ $(document).ready(function () {
     var doneTypeingInterval = 100;
 
     content.push({ id: id, content: "option #" + id, elementID: 'lastOption', peopleVoted: 0 });
-    ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
-
-    $('#channel-search').on('submit', function (e) {
-        e.preventDefault();
-        console.log('hello there');
+    ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'), function () {
+        $('.lastOption').parent().find('span').hide();
     });
 
     $("#poll").on('focus', '#lastOption', function () {
@@ -66,6 +68,24 @@ $(document).ready(function () {
             return element;
         });
         console.log(content);
+        ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'), function () {
+            $('.option').parent().find('span').show();
+            $('.lastOption').parent().find('span').hide();
+        });
+    });
+
+    $("#poll").on('click', '#delete', function () {
+        var self = this;
+        var indexToDelete = content.findIndex(function (e) {
+            if (e.id == +$(self).attr('name')) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        console.log(indexToDelete);
+        content.splice(indexToDelete, 1);
+
         ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
     });
 
@@ -87,7 +107,7 @@ $(document).ready(function () {
         $('#lastOption').parent().hide();
         console.log(content);
         for (var i = 0, length = content.length; i < length; i++) {
-            listeners.push(content[i].value);
+            listeners.push({ value: content[i].value, id: content[i].id });
         }
 
         client.connect();
@@ -95,20 +115,30 @@ $(document).ready(function () {
     $('#stopPoll').click(function () {
         client.disconnect();
         listeners = [];
-        $('.option').prop('disabled', false);
+        console.log($('.lastOption').parent());
         $('#lastOption').parent().show();
+        $('#lastOption').parent().find('strong[class=peopleVoted]').hide();
+        $('#lastOption').prop('disabled', false);
+        $('[id=delete]').prop('disabled', false);
     });
     client.on('chat', function (channel, userstate, message, self) {
         var messageArr = message.split(' ');
-        console.log(userstate);
         for (var i = 0, length = listeners.length; i < length; i++) {
-            console.log(messageArr.indexOf(listeners[i]));
-            if (messageArr.indexOf(listeners[i]) !== -1) {
-                console.log(namesOfVoted, userstate.username);
+            if (messageArr.indexOf(listeners[i].value) !== -1) {
+                //if message contains the option
                 if (namesOfVoted.indexOf(userstate.username) == -1) {
+                    //if person already voted
                     console.log('here');
-                    namesOfVoted.push(userstate.username);
-                    content[i].peopleVoted++;
+                    namesOfVoted.push(userstate.username); //push person to voted list
+                    var indexOfOption = content.findIndex(function (e) {
+                        //find index of voted option
+                        if (e.value == listeners[i].value) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    content[indexOfOption].peopleVoted++;
                     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
                 }
             }

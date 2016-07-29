@@ -49,6 +49,12 @@ $(document).ready(function () {
 
     content.push({ id: id, content: "option #" + id, elementID: 'lastOption', peopleVoted: 0 });
     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
+
+    $('#channel-search').on('submit', function (e) {
+        e.preventDefault();
+        console.log('hello there');
+    });
+
     $("#poll").on('focus', '#lastOption', function () {
         id++;
         content.push({ id: id, content: "option #" + id, elementID: 'option', peopleVoted: 0 });

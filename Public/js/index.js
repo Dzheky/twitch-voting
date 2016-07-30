@@ -1,7 +1,18 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+function auth() {
+    console.log('I am in auth');
+}
+
+module.exports = auth;
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
 var url = require('url');
+var auth = require('./auth.js');
+
 var socket = io();
 var options = {
     options: {
@@ -20,6 +31,7 @@ var client = tmi.client(options);
 socket.on('option', function (data) {
     console.log(data);
 });
+auth();
 
 var Option = function Option(props) {
     return React.createElement(
@@ -45,6 +57,10 @@ var Option = function Option(props) {
     );
 };
 $(document).ready(function () {
+    $.getJSON('/auth/user', function (err, data) {
+        if (err) console.log(err);
+        console.log(data);
+    });
     var content = [];
     var listeners = [];
     var namesOfVoted = [];
@@ -105,7 +121,6 @@ $(document).ready(function () {
         $('.peopleVoted').show();
         $('.option').prop('disabled', true);
         $('#lastOption').parent().hide();
-        console.log(content);
         for (var i = 0, length = content.length; i < length; i++) {
             listeners.push({ value: content[i].value, id: content[i].id });
         }
@@ -115,7 +130,6 @@ $(document).ready(function () {
     $('#stopPoll').click(function () {
         client.disconnect();
         listeners = [];
-        console.log($('.lastOption').parent());
         $('#lastOption').parent().show();
         $('#lastOption').parent().find('strong[class=peopleVoted]').hide();
         $('#lastOption').prop('disabled', false);
@@ -128,7 +142,6 @@ $(document).ready(function () {
                 //if message contains the option
                 if (namesOfVoted.indexOf(userstate.username) == -1) {
                     //if person already voted
-                    console.log('here');
                     namesOfVoted.push(userstate.username); //push person to voted list
                     var indexOfOption = content.findIndex(function (e) {
                         //find index of voted option
@@ -146,7 +159,7 @@ $(document).ready(function () {
     });
 });
 
-},{"url":6}],2:[function(require,module,exports){
+},{"./auth.js":1,"url":7}],3:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -683,7 +696,7 @@ $(document).ready(function () {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -769,7 +782,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -856,13 +869,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":3,"./encode":4}],6:[function(require,module,exports){
+},{"./decode":4,"./encode":5}],7:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1596,7 +1609,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":7,"punycode":2,"querystring":5}],7:[function(require,module,exports){
+},{"./util":8,"punycode":3,"querystring":6}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1614,4 +1627,4 @@ module.exports = {
   }
 };
 
-},{}]},{},[1]);
+},{}]},{},[2]);

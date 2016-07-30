@@ -6,11 +6,11 @@ var io = require('socket.io')(http);
 
 
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.use(express.static(__dirname+'/Public', {index: '_'}));
+
 var channel = '';
-app.get('/', function(req,res) {
-    res.sendFile(__dirname + '/Public/channel.html');
-});
+app.get('/auth/user', function(req, res) {
+    res.send(JSON.stringify({auth: true}));
+})
 app.get('/:channel', function(req, res) {
     console.log(req.params.channel)
     if (req.params.channel === 'favicon.ico') {
@@ -23,6 +23,10 @@ app.get('/:channel', function(req, res) {
     res.sendFile(__dirname + '/Public/index.html');
      
 });
+app.get('/', function(req,res) {
+    res.sendFile(__dirname + '/Public/channel.html');
+});
+app.use(express.static(__dirname+'/Public', {index: '_'}));
 
 
 io.on('connection', function(socket) {

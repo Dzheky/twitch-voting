@@ -1,4 +1,6 @@
 var url = require('url');
+var auth = require('./auth.js');
+
 var socket = io();
 var options = {
         options: {
@@ -17,6 +19,7 @@ var client = tmi.client(options);
 socket.on('option', function(data) {
     console.log(data);
 })
+auth();
 
 
 const Option = (props) => <div>{props.options.map(function(option) {
@@ -24,6 +27,10 @@ const Option = (props) => <div>{props.options.map(function(option) {
     
 })}</div>;
 $(document).ready(function() {
+    $.getJSON('/auth/user', function(err, data) {
+        if(err) console.log(err);
+        console.log(data);
+    })
     var content = [];
     var listeners = [];
     var namesOfVoted = [];
@@ -84,7 +91,6 @@ $(document).ready(function() {
       $('.peopleVoted').show();
       $('.option').prop('disabled', true);
       $('#lastOption').parent().hide();
-      console.log(content);
       for(var i = 0, length = content.length; i < length; i++) {
           listeners.push({value: content[i].value, id: content[i].id});
       }
@@ -94,7 +100,6 @@ $(document).ready(function() {
     $('#stopPoll').click(function() {
         client.disconnect();
         listeners = [];
-        console.log($('.lastOption').parent())
         $('#lastOption').parent().show();
         $('#lastOption').parent().find('strong[class=peopleVoted]').hide();
         $('#lastOption').prop('disabled', false);
@@ -105,7 +110,6 @@ $(document).ready(function() {
         for(var i = 0, length = listeners.length; i < length; i++) {
             if(messageArr.indexOf(listeners[i].value) !== -1) {//if message contains the option
                 if(namesOfVoted.indexOf(userstate.username) == -1) {//if person already voted
-                    console.log('here');
                     namesOfVoted.push(userstate.username);//push person to voted list
                     var indexOfOption = content.findIndex(function(e) {//find index of voted option
                         if(e.value == listeners[i].value) {

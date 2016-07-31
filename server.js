@@ -1,15 +1,39 @@
 var express = require("express");
-var bodyParser = require("body-parser");
+var request = require("request");
+var url = require('url');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 
-app.use(bodyParser.urlencoded({ extended: true })); 
 
 var channel = '';
 app.get('/auth/user', function(req, res) {
-    res.send(JSON.stringify({auth: true}));
+    var query = url.parse(req.originalUrl).query.split('&');
+    query = query.map(function(element) {
+        return element.split('=')[1];
+    })
+    if(query[2] == 'test') {
+        request({
+            url: 'https://api.twitch.tv/kraken/oauth2/token',
+            method: 'POST',
+            body:   'client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo'+
+                    '&client_secret='+process.env.CLIENT_SECRET+
+                    '&grant_type=authorization_code'+
+                    '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user'+
+                    '&code='+query[0]+
+                    '&state=test',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }, function(err, response, body) {
+            if(err) throw err;
+            if(JSON.parse(body).access_token) {
+                res.send(response)
+            }
+        })
+    }
+    
 })
 app.get('/:channel', function(req, res) {
     console.log(req.params.channel)

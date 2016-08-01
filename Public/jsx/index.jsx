@@ -27,10 +27,7 @@ const Option = (props) => <div>{props.options.map(function(option) {
     
 })}</div>;
 $(document).ready(function() {
-    $.getJSON('/auth/user', function(err, data) {
-        if(err) console.log(err);
-        console.log(data);
-    })
+    console.log(document.cookie);
     var content = [];
     var listeners = [];
     var namesOfVoted = [];

@@ -1,14 +1,17 @@
 var express = require("express");
+var session = require('express-session');
 var request = require("request");
 var url = require('url');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-
+var sessions = [];
 
 var channel = '';
+app.use(session({secret: 'test', path: '*', resave: true, saveUninitialized: false, httpOnly: true}));
 app.get('/auth/user', function(req, res) {
+    console.log(req.sessionID);
     var query = url.parse(req.originalUrl).query.split('&');
     query = query.map(function(element) {
         return element.split('=')[1];
@@ -29,7 +32,23 @@ app.get('/auth/user', function(req, res) {
         }, function(err, response, body) {
             if(err) throw err;
             if(JSON.parse(body).access_token) {
-                res.send(response)
+                var hour = 3600000
+                req.session.value = 'test';
+                req.session.cookie.expires = new Date(Date.now() + hour)
+                req.session.cookie.maxAge = hour
+                console.log(req.session.cookie.maxAge);
+                request({
+                    url: 'https://api.twitch.tv/kraken/user',
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/vnd.twitchtv.v3+json',
+                        Authorization: 'OAuth '+JSON.parse(body).access_token
+                    }
+                }, function(err, response, body) {
+                    sessions.push({sessionID: req.sessionID, name: JSON.parse(body)})
+                
+                    res.send(sessions)
+                })
             }
         })
     }
@@ -55,7 +74,6 @@ app.use(express.static(__dirname+'/Public', {index: '_'}));
 
 io.on('connection', function(socket) {
     var data = {channel: channel, count: 0};
-    var running = false;
     socket.emit('option', data);
     console.log('user connected')
 });

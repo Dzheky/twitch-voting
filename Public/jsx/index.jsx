@@ -21,7 +21,6 @@ socket.on('option', function(data) {
 })
 auth();
 
-
 const Option = (props) => <div>{props.options.map(function(option) {
     return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'option #'+option.id} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>
     

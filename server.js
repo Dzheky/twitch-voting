@@ -73,6 +73,13 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     
 });
 
+app.get('/auth/checklogin', function(req,res) {
+    if(req.session.name) {
+        res.json(JSON.stringify({auth:true}));
+    } else {
+        res.json(JSON.stringify({auth:false}));
+    }
+})
 
 app.get('/:channel', function(req, res) {
     if(req.session.name) {
@@ -89,7 +96,6 @@ app.get('/:channel', function(req, res) {
     req.session.cookie.expires = new Date(Date.now() + hour);
     req.session.cookie.maxAge = hour;
     req.session.url = req.protocol + 's://' + req.get('host') + req.originalUrl;
-    console.log(req.session.url);
     channel = req.params.channel;
     res.sendFile(__dirname + '/Public/index.html');
      

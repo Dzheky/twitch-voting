@@ -20,7 +20,7 @@ module.exports = auth;
 
 var url = require('url');
 var auth = require('./auth.js');
-
+var pollID;
 var socket = io();
 var options = {
     options: {
@@ -35,10 +35,12 @@ var options = {
 var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
 var client = tmi.client(options);
-//client.connect();
-socket.on('option', function (data) {
-    console.log(data);
+
+socket.on('id', function (data) {
+    pollID = data;
+    console.log('poll ID: ' + data);
 });
+
 auth();
 
 var Option = function Option(props) {
@@ -69,9 +71,24 @@ $(document).ready(function () {
     var content = [];
     var listeners = [];
     var namesOfVoted = [];
+    var running = false;
     var id = 0;
     var typingTimer;
     var doneTypeingInterval = 100;
+
+    function updatePoll(poll) {
+        $.ajax({ url: '/post/' + channel,
+            headers: {
+                'Content-Type': 'application/JSON'
+            },
+            method: 'POST',
+            data: JSON.stringify(poll),
+            success: function success(data) {
+                var socketData = { id: pollID, poll: poll };
+                socket.emit('vote', socketData);
+            }
+        });
+    }
 
     content.push({ id: id, content: "option #" + id, elementID: 'lastOption', peopleVoted: 0 });
     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'), function () {
@@ -123,22 +140,29 @@ $(document).ready(function () {
         clearTimeout(typingTimer);
     });
     $('#startPoll').click(function () {
-        $('.peopleVoted').show();
-        $('.option').prop('disabled', true);
-        $('#lastOption').parent().hide();
-        for (var i = 0, length = content.length; i < length; i++) {
-            listeners.push({ value: content[i].value, id: content[i].id });
-        }
+        if (!running) {
+            running = true;
+            $('.peopleVoted').show();
+            $('.option').prop('disabled', true);
+            $('#lastOption').parent().hide();
+            for (var i = 0, length = content.length; i < length; i++) {
+                listeners.push({ value: content[i].value, id: content[i].id });
+            }
+            updatePoll(content);
 
-        client.connect();
+            client.connect();
+        }
     });
     $('#stopPoll').click(function () {
-        client.disconnect();
-        listeners = [];
-        $('#lastOption').parent().show();
-        $('#lastOption').parent().find('strong[class=peopleVoted]').hide();
-        $('#lastOption').prop('disabled', false);
-        $('[id=delete]').prop('disabled', false);
+        if (running) {
+            running = false;
+            client.disconnect();
+            listeners = [];
+            $('#lastOption').parent().show();
+            $('#lastOption').parent().find('strong[class=peopleVoted]').hide();
+            $('#lastOption').prop('disabled', false);
+            $('[id=delete]').prop('disabled', false);
+        }
     });
     client.on('chat', function (channel, userstate, message, self) {
         var messageArr = message.split(' ');
@@ -157,6 +181,7 @@ $(document).ready(function () {
                         }
                     });
                     content[indexOfOption].peopleVoted++;
+                    updatePoll(content);
                     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
                 }
             }

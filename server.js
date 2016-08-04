@@ -54,7 +54,7 @@ app.get('/auth/user', function(req, res) { //Authanticate user
                         if(err) throw err;
                         users.findOne({name: JSON.parse(body).name}, function(err, user) {
                             if (user === null) {
-                                users.count({}, function(err, id) {//getting next id
+                                users.count({}, function(err, id) {//getting id for the user
                                     users.insert({ _id: id, name: JSON.parse(body).name, sessionID: req.sessionID, polls: []});
                                 });
                             } else {
@@ -88,7 +88,8 @@ app.post('/post/:channel', function(req, res) {
         mongo.connect(DBurl, function(err, db) {
             var users = db.collection('users');
             var polls = db.collection('polls');
-            req.body.pop();
+            req.body.poll.pop();
+            console.log(req.body);
             polls.findOne({_id: pollID}, function(err, poll) {
                 if(poll == null) {
                     polls.insertOne({_id: pollID, user: req.session.name, polls: req.body})
@@ -138,7 +139,7 @@ app.use(express.static(__dirname+'/Public', {index: '_'}));
 
 
 io.sockets.on('connection', function(socket) {
-    mongo.connect(DBurl, function(err, db) {
+    mongo.connect(DBurl, function(err, db) { //get poll id number and send it through Socket.io
         if(err) throw err;
         db.collection('polls').count({}, function(err, id) {
             if(err) throw err;

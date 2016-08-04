@@ -30,12 +30,12 @@ const Option = (props) => <div>{props.options.map(function(option) {
 $(document).ready(function() {
     console.log(document.cookie);
     var content = [];
+    var question;
     var listeners = [];
     var namesOfVoted = [];
     var running = false;
     var id = 0;
     var typingTimer;
-    var doneTypeingInterval = 100;
     
     function updatePoll(poll) {
         $.ajax({        url: '/post/'+channel,
@@ -43,9 +43,13 @@ $(document).ready(function() {
                               'Content-Type': 'application/JSON'  
                             },
                             method: 'POST',
-                            data: JSON.stringify(poll),
+                            data: JSON.stringify({question: question, poll: poll.map(function(element) {//for database
+                                    return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
+                                })}),
                             success: function(data) {
-                                var socketData = {id: pollID, poll: poll}
+                                var socketData = {id: pollID, question: question, poll: poll.map(function(element) {//for broadcast
+                                    return {id: element.id, value: element.value, peopleVoted: element.peoplevoted}
+                                })}
                                 socket.emit('vote', socketData);
                             }
             })
@@ -74,6 +78,10 @@ $(document).ready(function() {
         });
     })
     
+    $('#question').on('keyup', function() {
+        question = $(this).val();
+    });
+    
     $("#poll").on('click','#delete', function() {
         var self = this;
         var indexToDelete = content.findIndex(function(e) {
@@ -90,22 +98,16 @@ $(document).ready(function() {
     })
     
     $("#poll").on('keyup','.option', function() {
-        clearTimeout(typingTimer);
-        var self = this;
-        typingTimer = setTimeout(function() {
-           var name = +$(self).attr('name');
-           content[name].value = $(self).val();
-           console.log(content[name]);
-        }, doneTypeingInterval);
+        var name = +$(this).attr('name');
+        content[name].value = $(this).val();
     }); 
-    $('#poll').on('keydown', '.option', function() {
-        clearTimeout(typingTimer);
-    })
     $('#startPoll').click(function() {
         if(!running) {
             running = true;
             $('.peopleVoted').show();
             $('.option').prop('disabled', true);
+            $('#question').prop('disabled', true);
+            $('#question').off();
             $('#lastOption').parent().hide();
             for(var i = 0, length = content.length; i < length; i++) {
                 listeners.push({value: content[i].value, id: content[i].id});

@@ -11,6 +11,8 @@ function auth() {
             '&scope=user_read'+
             '&state=test';
             });
+        } else {
+            return true;
         }
     });
 }

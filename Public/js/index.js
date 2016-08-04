@@ -9,6 +9,8 @@ function auth() {
             $('#twitchLogin').click(function () {
                 window.location.href = 'https://api.twitch.tv/kraken/oauth2/authorize' + '?response_type=code' + '&client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo' + '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user' + '&scope=user_read' + '&state=test';
             });
+        } else {
+            return true;
         }
     });
 }
@@ -36,11 +38,6 @@ var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
 var client = tmi.client(options);
 
-socket.on('id', function (data) {
-    pollID = data;
-    console.log('poll ID: ' + data);
-});
-
 auth();
 
 var Option = function Option(props) {
@@ -66,15 +63,14 @@ var Option = function Option(props) {
         })
     );
 };
+
 $(document).ready(function () {
-    console.log(document.cookie);
     var content = [];
     var question;
     var listeners = [];
     var namesOfVoted = [];
     var running = false;
     var id = 0;
-    var typingTimer;
 
     function updatePoll(poll) {
         $.ajax({ url: '/post/' + channel,
@@ -82,14 +78,15 @@ $(document).ready(function () {
                 'Content-Type': 'application/JSON'
             },
             method: 'POST',
-            data: JSON.stringify({ question: question, poll: poll.map(function (element) {
+            data: JSON.stringify({ id: pollID, question: question, poll: poll.map(function (element) {
                     //for database
                     return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
                 }) }),
             success: function success(data) {
+                data = JSON.parse(data);
                 var socketData = { id: pollID, question: question, poll: poll.map(function (element) {
                         //for broadcast
-                        return { id: element.id, value: element.value, peopleVoted: element.peoplevoted };
+                        return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
                     }) };
                 socket.emit('vote', socketData);
             }
@@ -111,7 +108,6 @@ $(document).ready(function () {
             }
             return element;
         });
-        console.log(content);
         ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'), function () {
             $('.option').parent().find('span').show();
             $('.lastOption').parent().find('span').hide();
@@ -131,7 +127,6 @@ $(document).ready(function () {
                 return false;
             }
         });
-        console.log(indexToDelete);
         content.splice(indexToDelete, 1);
 
         ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
@@ -152,9 +147,15 @@ $(document).ready(function () {
             for (var i = 0, length = content.length; i < length; i++) {
                 listeners.push({ value: content[i].value, id: content[i].id });
             }
-            updatePoll(content);
-
-            client.connect();
+            $.getJSON('/get/id', function (data) {
+                data = JSON.parse(data);
+                if (data.id) {
+                    pollID = data.id;
+                    console.log('id of the poll is ' + pollID);
+                    updatePoll(content);
+                    client.connect();
+                }
+            });
         }
     });
     $('#stopPoll').click(function () {

@@ -16,26 +16,20 @@ var channel = url.parse(window.location.href).pathname.split('/')[1];
 options.channels.push(channel);
 var client = tmi.client(options);
 
-socket.on('id', function(data) {
-    pollID = data;
-    console.log('poll ID: ' + data);
-})
 
 auth();
 
 const Option = (props) => <div>{props.options.map(function(option) {
-    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'option #'+option.id} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>
-    
-})}</div>;
+    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'option #'+option.id} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
+
+
 $(document).ready(function() {
-    console.log(document.cookie);
     var content = [];
     var question;
     var listeners = [];
     var namesOfVoted = [];
     var running = false;
     var id = 0;
-    var typingTimer;
     
     function updatePoll(poll) {
         $.ajax({        url: '/post/'+channel,
@@ -43,12 +37,13 @@ $(document).ready(function() {
                               'Content-Type': 'application/JSON'  
                             },
                             method: 'POST',
-                            data: JSON.stringify({question: question, poll: poll.map(function(element) {//for database
+                            data: JSON.stringify({id: pollID, question, poll: poll.map(function(element) {//for database
                                     return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}),
                             success: function(data) {
+                                data = JSON.parse(data);
                                 var socketData = {id: pollID, question: question, poll: poll.map(function(element) {//for broadcast
-                                    return {id: element.id, value: element.value, peopleVoted: element.peoplevoted}
+                                    return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}
                                 socket.emit('vote', socketData);
                             }
@@ -71,7 +66,6 @@ $(document).ready(function() {
             }
             return element;
         })
-        console.log(content);
         ReactDOM.render(<Option options={content}/>, document.getElementById('poll'), function() {
             $('.option').parent().find('span').show();
             $('.lastOption').parent().find('span').hide();
@@ -91,7 +85,6 @@ $(document).ready(function() {
                 return false;
             }
         })
-        console.log(indexToDelete);
         content.splice(indexToDelete, 1);
 
         ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));
@@ -112,9 +105,15 @@ $(document).ready(function() {
             for(var i = 0, length = content.length; i < length; i++) {
                 listeners.push({value: content[i].value, id: content[i].id});
             }
-            updatePoll(content);
-              
-            client.connect();
+            $.getJSON('/get/id', function(data) {
+                data = JSON.parse(data);
+                if(data.id) {
+                    pollID = data.id;
+                    console.log('id of the poll is ' +pollID);
+                    updatePoll(content);
+                    client.connect();
+                }
+            })
         }
     })
     $('#stopPoll').click(function() {

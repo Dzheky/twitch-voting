@@ -12,7 +12,6 @@ var io = require('socket.io')(http);
 var DBurl = `mongodb://${process.env.DBUser}:${process.env.DBPassword}@ds139715.mlab.com:39715/twitch_users`;
 var sessions = [];
 var channel = '';
-var pollID;
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -90,11 +89,13 @@ app.get('/auth/checklogin', function(req,res) {
 //POST request to save the poll
 app.post('/post/:channel', function(req, res) {
     if(req.session.name) {
-        mongo.connect(DBurl, function(err, db) {
+        mongo.connect(DBurl, function(err, db) {//get poll id number and send it through Socket.io
+            var pollID = req.body.id
+            if(err) throw err;
             var users = db.collection('users');
             var polls = db.collection('polls');
             req.body.poll.pop();
-            console.log(req.body);
+            console.log('post request to update poll');
             polls.findOne({_id: pollID}, function(err, poll) {
                 if(poll == null) {
                     polls.insertOne({_id: pollID, user: req.session.name, polls: req.body})
@@ -109,7 +110,7 @@ app.post('/post/:channel', function(req, res) {
                         users.updateOne({name: req.session.name}, data)
                     }
                 })
-                res.json(JSON.stringify({status: "done"}));
+                res.json(JSON.stringify({status: "done", id: pollID}));
             })
         })  
     } else {
@@ -133,13 +134,32 @@ app.get('/:channel', function(req, res) {
     res.sendFile(__dirname + '/Public/index.html');
 });
 
+
+//get id for the poll
+app.get('/get/id', function(req,res) {
+    var pollID
+    mongo.connect(DBurl, function(err, db) {
+        db.collection('polls').count({}, function(err, id) {
+                    if(err) throw err;
+                    pollID = id;
+                    if(req.session.name) {
+                        db.collection('polls').insertOne({_id: pollID, data: 'placeholder'});
+                        res.json(JSON.stringify({id: pollID}));
+                    } else {
+                        res.json(JSON.stringify({err: "not logged in"}));
+                    }
+                        
+        });
+    })
+})
+
 //get poll by id
 app.get('/get/:id', function(req,res) {
     mongo.connect(DBurl, function(err, db) {
         if(err) throw err;
         var polls = db.collection('polls');
         polls.findOne({_id: +req.params.id}, function(err, poll) {
-            console.log('poll: '+poll);
+            console.log('get request for poll');
             if(err) throw err;
             if(poll === null) {
                 res.json(JSON.stringify({err: 'this poll doesn\'t exist'}))
@@ -149,6 +169,8 @@ app.get('/get/:id', function(req,res) {
         })
     })
 })
+
+
 //page to see the poll results
 app.get('/id/:id', function(req, res) {
     var hour = 3600000;
@@ -170,17 +192,11 @@ app.use(express.static(__dirname+'/Public', {index: '_'}));
 
 
 io.sockets.on('connection', function(socket) {
-    mongo.connect(DBurl, function(err, db) { //get poll id number and send it through Socket.io
-        if(err) throw err;
-        db.collection('polls').count({}, function(err, id) {
-            if(err) throw err;
-            pollID = id;
-            socket.emit('id', pollID);
-        })
-    })
+    console.log('connected');
     socket.on('vote', function(data) {
         data.poll.pop();
-        socket.emit(data.id, data.poll);
+        console.log('id for socket is: '+data.id)
+        socket.broadcast.emit('poll'+data.id, data);
     })
 });
 

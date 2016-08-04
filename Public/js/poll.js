@@ -9,6 +9,8 @@ function auth() {
             $('#twitchLogin').click(function () {
                 window.location.href = 'https://api.twitch.tv/kraken/oauth2/authorize' + '?response_type=code' + '&client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo' + '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user' + '&scope=user_read' + '&state=test';
             });
+        } else {
+            return true;
         }
     });
 }
@@ -20,19 +22,24 @@ module.exports = auth;
 
 var auth = require('./auth.js');
 var url = require('url');
+var socket = io();
 
 auth();
 
 var poll;
 var id = url.parse(window.location.href).pathname.split('/')[2];
 
-console.log(id);
 $.getJSON('/get/' + id, function (data) {
     data = JSON.parse(data);
     if (data.err) {
         $('#question').html(data.err);
     } else {
-        console.log(data);
+        $('#question').html(data.question);
+        console.log('id for socket is: ' + id);
+        socket.on('poll' + id, function (data) {
+            $('#question').html(data.question);
+            $('#options').html(data.poll[0].value + ' ' + data.poll[0].peopleVoted);
+        });
     }
 });
 

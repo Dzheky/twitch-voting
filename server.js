@@ -20,6 +20,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(session({secret: 'test', path: '*', resave: true, saveUninitialized: false, httpOnly: true})); //create sessionID
 
+
+//authentication
 app.get('/auth/user', function(req, res) { //Authanticate user
     var query = url.parse(req.originalUrl).query.split('&');
     query = query.map(function(element) {
@@ -75,6 +77,8 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     
 });
 
+
+//check if user is authenticated
 app.get('/auth/checklogin', function(req,res) {
     if(req.session.name) {
         res.json(JSON.stringify({auth:true}));
@@ -83,6 +87,7 @@ app.get('/auth/checklogin', function(req,res) {
     }
 })
 
+//POST request to save the poll
 app.post('/post/:channel', function(req, res) {
     if(req.session.name) {
         mongo.connect(DBurl, function(err, db) {
@@ -112,6 +117,7 @@ app.post('/post/:channel', function(req, res) {
     }
 })
 
+//page to create a new poll on specific channel
 app.get('/:channel', function(req, res) {
     if (req.params.channel === 'favicon.ico') {
         res.writeHead(200, {'Content-Type': 'image/x-icon'} );
@@ -127,7 +133,32 @@ app.get('/:channel', function(req, res) {
     res.sendFile(__dirname + '/Public/index.html');
 });
 
+//get poll by id
+app.get('/get/:id', function(req,res) {
+    mongo.connect(DBurl, function(err, db) {
+        if(err) throw err;
+        var polls = db.collection('polls');
+        polls.findOne({_id: +req.params.id}, function(err, poll) {
+            console.log('poll: '+poll);
+            if(err) throw err;
+            if(poll === null) {
+                res.json(JSON.stringify({err: 'this poll doesn\'t exist'}))
+            } else {
+                res.json(JSON.stringify(poll));
+            }
+        })
+    })
+})
+//page to see the poll results
+app.get('/id/:id', function(req, res) {
+    var hour = 3600000;
+    req.session.cookie.expires = new Date(Date.now() + hour);
+    req.session.cookie.maxAge = hour;
+    req.session.url = req.protocol + 's://' + req.get('host') + req.originalUrl;
+    res.sendFile(__dirname+'/Public/poll.html');
+})
 
+//main page
 app.get('/', function(req,res) {
     res.sendFile(__dirname + '/Public/channel.html');
 });

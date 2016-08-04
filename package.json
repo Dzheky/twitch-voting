@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "watchify Public/jsx/index.jsx -v -o Public/js/index.js -t [ babelify --presets [ es2015 react ] ]"
+    "watch-index": "watchify Public/jsx/index.jsx -v -o Public/js/index.js -t [ babelify --presets [ es2015 react ] ]",
+    "watch-poll": "watchify Public/jsx/poll.jsx -v -o Public/js/poll.js -t [ babelify --presets [ es2015 react ] ]"
   },
   "repository": {
     "type": "git",

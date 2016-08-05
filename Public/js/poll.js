@@ -28,18 +28,42 @@ auth();
 
 var poll;
 var id = url.parse(window.location.href).pathname.split('/')[2];
-
 $.getJSON('/get/' + id, function (data) {
     data = JSON.parse(data);
     if (data.err) {
         $('#question').html(data.err);
     } else {
-        $('#question').html(data.question);
-        console.log('id for socket is: ' + id);
-        socket.on('poll' + id, function (data) {
+        var ol;
+
+        (function () {
+            var update = function update(dat) {
+                d3.select('#question').text(function () {
+                    return dat.question;
+                });
+                var x = ol.selectAll('li').data(dat.polls);
+
+                x.attr('class', 'update');
+                x.text(function (element) {
+                    return element.value + "    " + element.peopleVoted;
+                });
+                x.enter().append('li').text(function (element) {
+                    return element.value + "    " + element.peopleVoted;
+                });
+
+                // .selectAll('li')
+                // .data(data.poll)
+                // .enter().append('span').html('hello world');
+            };
+
             $('#question').html(data.question);
-            $('#options').html(data.poll[0].value + ' ' + data.poll[0].peopleVoted);
-        });
+            console.log('id for socket is: ' + id);
+            ol = d3.select("#options").append('ol');
+
+            update(data.polls);
+            socket.on('poll' + id, function (data) {
+                update(data);
+            });
+        })();
     }
 });
 

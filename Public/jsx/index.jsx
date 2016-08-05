@@ -29,6 +29,7 @@ $(document).ready(function() {
     var listeners = [];
     var namesOfVoted = [];
     var running = false;
+    var firstTimeRun = true;
     var id = 0;
     
     function updatePoll(poll) {
@@ -37,12 +38,12 @@ $(document).ready(function() {
                               'Content-Type': 'application/JSON'  
                             },
                             method: 'POST',
-                            data: JSON.stringify({id: pollID, question, poll: poll.map(function(element) {//for database
+                            data: JSON.stringify({id: pollID, question: question, polls: poll.map(function(element) {//for database
                                     return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}),
                             success: function(data) {
                                 data = JSON.parse(data);
-                                var socketData = {id: pollID, question: question, poll: poll.map(function(element) {//for broadcast
+                                var socketData = {id: pollID, question: question, polls: poll.map(function(element) {//for broadcast
                                     return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}
                                 socket.emit('vote', socketData);
@@ -105,15 +106,21 @@ $(document).ready(function() {
             for(var i = 0, length = content.length; i < length; i++) {
                 listeners.push({value: content[i].value, id: content[i].id});
             }
-            $.getJSON('/get/id', function(data) {
-                data = JSON.parse(data);
-                if(data.id) {
-                    pollID = data.id;
-                    console.log('id of the poll is ' +pollID);
-                    updatePoll(content);
-                    client.connect();
-                }
-            })
+            if(firstTimeRun) {
+                $.getJSON('/get/id', function(data) {
+                    data = JSON.parse(data);
+                    if(data.id) {
+                        pollID = data.id;
+                        console.log('id of the poll is ' +pollID);
+                        updatePoll(content);
+                        client.connect();
+                        firstTimeRun = false;
+                    }
+                })
+            } else {
+                updatePoll(content);
+                client.connect();
+            }
         }
     })
     $('#stopPoll').click(function() {

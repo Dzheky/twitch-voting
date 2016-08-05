@@ -94,13 +94,13 @@ app.post('/post/:channel', function(req, res) {
             if(err) throw err;
             var users = db.collection('users');
             var polls = db.collection('polls');
-            req.body.poll.pop();
+            req.body.polls.pop();
             console.log('post request to update poll');
             polls.findOne({_id: pollID}, function(err, poll) {
                 if(poll == null) {
                     polls.insertOne({_id: pollID, user: req.session.name, polls: req.body})
                 } else {
-                    poll.polls = req.body;
+                    poll = {_id: pollID, user: req.session.name, polls: req.body}
                     polls.updateOne({_id: pollID}, poll);
                 }
                 var user = users.findOne({name: req.session.name});
@@ -194,7 +194,7 @@ app.use(express.static(__dirname+'/Public', {index: '_'}));
 io.sockets.on('connection', function(socket) {
     console.log('connected');
     socket.on('vote', function(data) {
-        data.poll.pop();
+        data.polls.pop();
         console.log('id for socket is: '+data.id)
         socket.broadcast.emit('poll'+data.id, data);
     })

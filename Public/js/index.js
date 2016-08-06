@@ -98,7 +98,7 @@ $(document).ready(function () {
     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'), function () {
         $('.lastOption').parent().find('span').hide();
     });
-
+    //adding new option on focus
     $("#poll").on('focus', '#lastOption', function () {
         id++;
         content.push({ id: id, content: "option #" + id, elementID: 'option', peopleVoted: 0 });
@@ -114,11 +114,11 @@ $(document).ready(function () {
             $('.lastOption').parent().find('span').hide();
         });
     });
-
+    //save typed question
     $('#question').on('keyup', function () {
         question = $(this).val();
     });
-
+    //poll option deleting
     $("#poll").on('click', '#delete', function () {
         var self = this;
         var indexToDelete = content.findIndex(function (e) {

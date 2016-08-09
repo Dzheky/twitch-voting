@@ -192,7 +192,6 @@ app.use(express.static(__dirname+'/Public', {index: '_'}));
 io.sockets.on('connection', function(socket) {
     console.log('connected');
     socket.on('vote', function(data) {
-        data.polls.pop();
         socket.broadcast.emit('poll'+data.id, data);
     })
 });

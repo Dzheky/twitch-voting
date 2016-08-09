@@ -47,6 +47,7 @@ $(document).ready(function() {
                                 var socketData = {id: pollID, question: question, polls: poll.map(function(element) {//for broadcast
                                     return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}
+                                socketData.polls.pop();
                                 drawPolls.updatePie(socketData);
                                 socket.emit('vote', socketData);
                             }

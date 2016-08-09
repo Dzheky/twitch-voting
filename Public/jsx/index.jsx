@@ -1,5 +1,6 @@
 var url = require('url');
 var auth = require('./auth.js');
+var drawPoll = require("./drawPoll.js")
 var pollID;
 var socket = io();
 var options = {
@@ -31,7 +32,7 @@ $(document).ready(function() {
     var running = false;
     var firstTimeRun = true;
     var id = 0;
-    
+    var drawPolls = drawPoll(content);
     function updatePoll(poll) {
         $.ajax({        url: '/post/'+channel,
                             headers: {
@@ -46,6 +47,7 @@ $(document).ready(function() {
                                 var socketData = {id: pollID, question: question, polls: poll.map(function(element) {//for broadcast
                                     return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
                                 })}
+                                drawPolls.updatePie(socketData);
                                 socket.emit('vote', socketData);
                             }
             })

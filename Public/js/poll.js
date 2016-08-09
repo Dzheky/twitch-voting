@@ -20,9 +20,56 @@ module.exports = auth;
 },{}],2:[function(require,module,exports){
 'use strict';
 
+function drawPoll(poll) {
+    console.log('drawing a poll');
+    var polls = {
+        updatePie: updatePie
+    };
+    var pieDim = { w: 250, h: 250 };
+    var votes = [];
+    console.log(votes);
+    var piesvg = d3.select('#pie').append('svg').attr('height', '400').attr('width', '400').append('g').attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
+    var arc = d3.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
+    var pie = d3.pie().value(function (d) {
+        return d;
+    });
+    var colors = d3.scaleOrdinal(d3.schemeCategory10);
+    function arcTween(a) {
+        var i = d3.interpolate(this._current, a);
+        this._current = i(0);
+        return function (t) {
+            return arc(i(t));
+        };
+    }
+
+    function updatePie(poll) {
+        votes = poll.polls.map(function (data) {
+            return data.peopleVoted;
+        });
+        console.log(votes);
+        var pies = piesvg.selectAll("path").data(pie(votes));
+        pies.enter().append("path").attr("d", arc).each(function (d) {
+            this._current = d;
+        }).style("fill", function (d, i) {
+            return colors(i);
+        });
+
+        pies.transition().duration(750).attrTween('d', arcTween);
+    }
+    return polls;
+}
+
+module.exports = drawPoll;
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
 var auth = require('./auth.js');
 var url = require('url');
+var drawPoll = require("./drawPoll.js");
 var socket = io();
+var content = [];
+var drawPolls = drawPoll(content);
 
 auth();
 
@@ -37,6 +84,7 @@ $.getJSON('/get/' + id, function (data) {
 
         (function () {
             var update = function update(dat) {
+                drawPolls.updatePie(dat);
                 d3.select('#question').text(function () {
                     return dat.question;
                 });
@@ -67,7 +115,7 @@ $.getJSON('/get/' + id, function (data) {
     }
 });
 
-},{"./auth.js":1,"url":7}],3:[function(require,module,exports){
+},{"./auth.js":1,"./drawPoll.js":2,"url":8}],4:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -604,7 +652,7 @@ $.getJSON('/get/' + id, function (data) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -690,7 +738,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -777,13 +825,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":4,"./encode":5}],7:[function(require,module,exports){
+},{"./decode":5,"./encode":6}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1517,7 +1565,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":8,"punycode":3,"querystring":6}],8:[function(require,module,exports){
+},{"./util":9,"punycode":4,"querystring":7}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1535,4 +1583,4 @@ module.exports = {
   }
 };
 
-},{}]},{},[2]);
+},{}]},{},[3]);

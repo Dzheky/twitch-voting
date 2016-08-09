@@ -95,7 +95,6 @@ app.post('/post/:channel', function(req, res) {
             var users = db.collection('users');
             var polls = db.collection('polls');
             req.body.polls.pop();
-            console.log('post request to update poll');
             polls.findOne({_id: pollID}, function(err, poll) {
                 if(poll == null) {
                     polls.insertOne({_id: pollID, user: req.session.name, polls: req.body})
@@ -135,7 +134,7 @@ app.get('/:channel', function(req, res) {
 });
 
 
-//get id for the poll
+//get next id for the new poll
 app.get('/get/id', function(req,res) {
     var pollID
     mongo.connect(DBurl, function(err, db) {
@@ -159,7 +158,6 @@ app.get('/get/:id', function(req,res) {
         if(err) throw err;
         var polls = db.collection('polls');
         polls.findOne({_id: +req.params.id}, function(err, poll) {
-            console.log('get request for poll');
             if(err) throw err;
             if(poll === null) {
                 res.json(JSON.stringify({err: 'this poll doesn\'t exist'}))
@@ -195,7 +193,6 @@ io.sockets.on('connection', function(socket) {
     console.log('connected');
     socket.on('vote', function(data) {
         data.polls.pop();
-        console.log('id for socket is: '+data.id)
         socket.broadcast.emit('poll'+data.id, data);
     })
 });

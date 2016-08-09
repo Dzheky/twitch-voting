@@ -1,6 +1,9 @@
 var auth = require('./auth.js');
 var url = require('url');
+var drawPoll = require("./drawPoll.js")
 var socket = io();
+var content = [];
+var drawPolls = drawPoll(content);
 
 
 
@@ -17,6 +20,7 @@ $.getJSON('/get/'+id, function(data) {
         console.log('id for socket is: '+id)
         var ol = d3.select("#options").append('ol')
         function update(dat) {
+            drawPolls.updatePie(dat);
             d3.select('#question')
                 .text(function() {
                     return dat.question

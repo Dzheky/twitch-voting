@@ -21,7 +21,7 @@ var client = tmi.client(options);
 auth();
 
 const Option = (props) => <div>{props.options.map(function(option) {
-    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'option #'+option.id} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
+    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'Type your Option'} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
 
 
 $(document).ready(function() {
@@ -33,8 +33,10 @@ $(document).ready(function() {
     var firstTimeRun = true;
     var id = 0;
     var drawPolls = drawPoll(content);
+    
     function updatePoll(poll) {
-        $.ajax({        url: '/post/'+channel,
+        if(id !== 0) {
+            $.ajax({        url: '/post/'+channel,
                             headers: {
                               'Content-Type': 'application/JSON'  
                             },
@@ -51,7 +53,14 @@ $(document).ready(function() {
                                 drawPolls.updatePie(socketData);
                                 socket.emit('vote', socketData);
                             }
-            })
+            })   
+        } else {
+            var socketData = {id: pollID, question: question, polls: poll.map(function(element) {//for broadcast
+                                    return {id: element.id, value: element.value, peopleVoted: element.peopleVoted}
+                                })}
+            socketData.polls.pop();
+            drawPolls.updatePie(socketData);
+        }
     }
     
     
@@ -118,6 +127,9 @@ $(document).ready(function() {
                         console.log('id of the poll is ' +pollID);
                         updatePoll(content);
                         client.connect();
+                    } else {
+                        client.connect();
+                        updatePoll(content);
                     }
                 })
             } else {

@@ -126,7 +126,7 @@ var Option = function Option(props) {
                     { className: option.elementID, name: option.id, style: { cursor: 'pointer' }, id: 'delete' },
                     'X  '
                 ),
-                React.createElement('input', { type: 'text', className: 'option', name: option.id, placeholder: 'option #' + option.id, id: option.elementID }),
+                React.createElement('input', { type: 'text', className: 'option', name: option.id, placeholder: 'Type your Option', id: option.elementID }),
                 React.createElement(
                     'strong',
                     { className: 'peopleVoted', style: { display: 'none' } },
@@ -146,27 +146,37 @@ $(document).ready(function () {
     var firstTimeRun = true;
     var id = 0;
     var drawPolls = drawPoll(content);
+
     function updatePoll(poll) {
-        $.ajax({ url: '/post/' + channel,
-            headers: {
-                'Content-Type': 'application/JSON'
-            },
-            method: 'POST',
-            data: JSON.stringify({ id: pollID, question: question, polls: poll.map(function (element) {
-                    //for database
-                    return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
-                }) }),
-            success: function success(data) {
-                data = JSON.parse(data);
-                var socketData = { id: pollID, question: question, polls: poll.map(function (element) {
-                        //for broadcast
+        if (id !== 0) {
+            $.ajax({ url: '/post/' + channel,
+                headers: {
+                    'Content-Type': 'application/JSON'
+                },
+                method: 'POST',
+                data: JSON.stringify({ id: pollID, question: question, polls: poll.map(function (element) {
+                        //for database
                         return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
-                    }) };
-                socketData.polls.pop();
-                drawPolls.updatePie(socketData);
-                socket.emit('vote', socketData);
-            }
-        });
+                    }) }),
+                success: function success(data) {
+                    data = JSON.parse(data);
+                    var socketData = { id: pollID, question: question, polls: poll.map(function (element) {
+                            //for broadcast
+                            return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
+                        }) };
+                    socketData.polls.pop();
+                    drawPolls.updatePie(socketData);
+                    socket.emit('vote', socketData);
+                }
+            });
+        } else {
+            var socketData = { id: pollID, question: question, polls: poll.map(function (element) {
+                    //for broadcast
+                    return { id: element.id, value: element.value, peopleVoted: element.peopleVoted };
+                }) };
+            socketData.polls.pop();
+            drawPolls.updatePie(socketData);
+        }
     }
 
     content.push({ id: id, content: "option #" + id, elementID: 'lastOption', peopleVoted: 0 });
@@ -232,6 +242,9 @@ $(document).ready(function () {
                         console.log('id of the poll is ' + pollID);
                         updatePoll(content);
                         client.connect();
+                    } else {
+                        client.connect();
+                        updatePoll(content);
                     }
                 });
             } else {

@@ -110,6 +110,7 @@ $(document).ready(function() {
                 listeners.push({value: content[i].value, id: content[i].id});
             }
             if(firstTimeRun) {
+                firstTimeRun = false;
                 $.getJSON('/get/id', function(data) {
                     data = JSON.parse(data);
                     if(data.id) {
@@ -117,7 +118,6 @@ $(document).ready(function() {
                         console.log('id of the poll is ' +pollID);
                         updatePoll(content);
                         client.connect();
-                        firstTimeRun = false;
                     }
                 })
             } else {

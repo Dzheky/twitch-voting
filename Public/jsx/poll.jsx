@@ -35,6 +35,8 @@ $.getJSON('/get/'+id, function(data) {
                 .text(function(element) {
                     return element.value + "    "+element.peopleVoted;
                 })
+                
+                x.exit().remove();
 
                 // .selectAll('li')
                 // .data(data.poll)

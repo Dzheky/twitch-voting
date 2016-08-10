@@ -55,15 +55,20 @@ function drawPoll(poll) {
             return colors(i);
         });
 
+        pies.exit().remove();
+
         pies.transition().duration(750).attrTween('d', arcTween);
 
         var legendItemAdd = legend.enter().append('g').attr('class', 'legendItem').attr('transform', function (d, i) {
             return 'translate(' + (pieDim.w - 100) + ',' + (15 * i - 100) + ')';
         });
 
+        legend.exit().remove();
+
         legendItemAdd.append('rect').attr('width', 10).attr('height', 10).attr('x', 0).attr('y', 0).attr('fill', function (d, i) {
             return colors(i);
         });
+
         legendItemAdd.append('text').text(function (d) {
             return d.value;
         }).attr('transform', 'translate(15, 10)');
@@ -219,6 +224,7 @@ $(document).ready(function () {
                 listeners.push({ value: content[i].value, id: content[i].id });
             }
             if (firstTimeRun) {
+                firstTimeRun = false;
                 $.getJSON('/get/id', function (data) {
                     data = JSON.parse(data);
                     if (data.id) {
@@ -226,7 +232,6 @@ $(document).ready(function () {
                         console.log('id of the poll is ' + pollID);
                         updatePoll(content);
                         client.connect();
-                        firstTimeRun = false;
                     }
                 });
             } else {

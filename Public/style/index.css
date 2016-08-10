@@ -1,0 +1,24 @@
+.arc path {
+          stroke: #fff;
+          stroke-width: 2;
+}
+
+.dashboard {
+    background-color: #377D6A;
+    height: 50px;
+    width: 100%;
+}
+
+
+html, body {
+    background: #7ab893;
+}
+
+#inputField {
+    white-space: nowrap;
+    padding-top: 100px;
+    padding-bottom: 25px;
+}
+#question {
+    margin-left: 100px;
+}

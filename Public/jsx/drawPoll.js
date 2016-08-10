@@ -33,6 +33,8 @@ function drawPoll(poll) {
         pies.enter().append("path").attr("d", arc)
             .each(function(d) { this._current = d; })
             .style("fill", function(d, i) { return colors(i)});
+        
+        pies.exit().remove();
             
         pies.transition().duration(750).attrTween('d', arcTween)
         
@@ -41,6 +43,8 @@ function drawPoll(poll) {
             .attr('transform', function(d, i) {
                 return 'translate('+(pieDim.w-100)+','+(15*i-100)+')';
             });
+        
+        legend.exit().remove();
             
         legendItemAdd.append('rect')
                 .attr('width', 10)
@@ -48,6 +52,7 @@ function drawPoll(poll) {
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('fill', function(d, i) { return colors(i)});
+                
         legendItemAdd.append('text')
                 .text(function(d) {
                     return d.value;

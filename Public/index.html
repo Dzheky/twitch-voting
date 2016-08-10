@@ -11,19 +11,18 @@
     <script src="./js/d3.v4.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.min.js"></script>
     <link href="./style/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .arc path {
-          stroke: #fff;
-          stroke-width: 2;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="./style/index.css">
+    <link rel="stylesheet" type="text/css" href="./style/inputStyle.css">
 </head>
 <body>
+    <div class="dashboard">
+            <button type='button' class='btn btn-default' id='twitchLogin' style='display: none;'>Twitch</button>    
+    </div>
     <div class="container">
-        <button type='button' class='btn btn-default' id='twitchLogin' style='display: none;'>Twitch</button>
         <div class="row">
-            <div class="col-sm-12">
-                <input type="text" name="question" id='question' placeholder='Put your question here'/>
+            <div class="col-xs-12 text-center" id='inputField'>
+                <input class='gate' type="text" name="question" id='question' autocomplete="off" placeholder="Question!"/>
+                <label for="question">Question</label>
                 <div class="poll" id='poll'></div>
                 <button type='button' class="btn btn-default" id='startPoll'>Start Poll</button>
                 <button type='button' class="btn btn-danger" id='stopPoll'>Stop Poll</button>

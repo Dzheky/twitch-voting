@@ -7,8 +7,9 @@
 
 .dashboard {
     background-color: #377D6A;
-    height: 50px;
+    height: 60px;
     width: 100%;
+    text-align: right;
 }
 
 
@@ -130,4 +131,14 @@ button#startPoll:hover {
 button#stopPoll:hover {
     background: #9e2727;
     color: #fb8080;
+}
+
+#twitchLogin {
+    color: #7ab893;
+    background: #377d6a;
+    border: 1px solid #7ab893;
+}
+button#twitchLogin:hover {
+    background: #a0f1c0;
+    color: #377d6a;
 }

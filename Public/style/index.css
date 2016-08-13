@@ -142,3 +142,16 @@ button#twitchLogin:hover {
     background: #a0f1c0;
     color: #377d6a;
 }
+
+
+#votingPulse path {
+   stroke: #1b70e0;
+   stroke-width: 2;
+   fill: none;
+}
+
+#chatPulse path {
+	stroke: #1b70e0;
+  stroke-width: 2;
+  fill: none;
+}

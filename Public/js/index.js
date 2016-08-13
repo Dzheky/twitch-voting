@@ -28,11 +28,11 @@ function drawPoll(poll) {
     var pieDim = { w: 250, h: 250 };
     var votes = [];
     var piesvg = d3.select('#pie').append('svg').attr('height', '400').attr('width', '500').append('g').attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
-    var arc = d3.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
-    var pie = d3.pie().value(function (d) {
+    var arc = d3.svg.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
+    var pie = d3.layout.pie().value(function (d) {
         return d;
     });
-    var colors = d3.scaleOrdinal(d3.schemeCategory10);
+    var colors = d3.scale.category10();
     function arcTween(a) {
         var i = d3.interpolate(this._current, a);
         this._current = i(0);
@@ -90,13 +90,97 @@ function drawPoll(poll) {
 module.exports = drawPoll;
 
 },{}],3:[function(require,module,exports){
+"use strict";
+
+function pulse() {
+	var pulseObj = {
+		updateVotePulse: displayVotes,
+		updateChatPulse: displayChat,
+		totalChat: 0,
+		totalVotes: 0,
+		chat: [0],
+		votes: [0]
+	};
+	function displayVotes(id, width, height, updateDelay) {
+		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
+
+		var dataOne = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+
+		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
+		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
+		var line = d3.svg.line().x(function (d, i) {
+			return x(i);
+		}).y(function (d) {
+			return y(d);
+		}).interpolate("cardinal");
+
+		graph.append("svg:path").attr("d", line(dataOne));
+
+		function redrawWithAnimation() {
+			graph.selectAll("path").data([dataOne]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease('linear').attr("transform", "translate(" + x(0) + ")");
+		}
+
+		setInterval(function () {
+			var i = pulseObj.votes.length - 1;
+			var nextVar = 50;
+			if (pulseObj.totalVotes - pulseObj.votes[i] !== 0) {
+				nextVar = Math.floor(Math.random() * 90 + 1);
+				pulseObj.votes.push(pulseObj.totalVotes);
+			}
+			dataOne.shift();
+			dataOne.push(nextVar);
+			redrawWithAnimation();
+		}, updateDelay);
+	}
+
+	function displayChat(id, width, height, updateDelay) {
+		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
+		var dataTwo = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+
+		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
+		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
+		var line = d3.svg.line().x(function (d, i) {
+			return x(i);
+		}).y(function (d) {
+			return y(d);
+		}).interpolate("cardinal");
+
+		graph.append("svg:path").attr("d", line(dataTwo));
+
+		function redrawWithAnimation() {
+			graph.selectAll("path").data([dataTwo]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease("linear").attr("transform", "translate(" + x(0) + ")");
+		}
+
+		setInterval(function () {
+			var i = pulseObj.chat.length - 1;
+			var nextVar = 50;
+			if (pulseObj.totalChat - pulseObj.chat[i] !== 0) {
+				nextVar = Math.floor(Math.random() * 90 + 1);
+				pulseObj.chat.push(pulseObj.totalChat);
+			}
+			dataTwo.shift();
+			dataTwo.push(nextVar);
+			redrawWithAnimation();
+		}, updateDelay);
+	}
+
+	return pulseObj;
+}
+// Used idea http://codepen.io/mginnard/pen/mkBEg?editors=1000 to inspire this chat pulse.
+
+module.exports = pulse;
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var url = require('url');
 var auth = require('./auth.js');
 var drawPoll = require("./drawPoll.js");
+var pulse = require("./drawPulse.js");
 var pollID;
 var socket = io();
+var totalChat = 0;
+var totalVotes = 0;
 var options = {
     options: {
         debug: true
@@ -126,7 +210,8 @@ var Option = function Option(props) {
                     { className: option.elementID, name: option.id, style: { cursor: 'pointer' }, id: 'delete' },
                     'X  '
                 ),
-                React.createElement('input', { type: 'text', className: 'option', name: option.id, placeholder: 'Type your Option', id: option.elementID }),
+                React.createElement('input', { type: 'text', className: 'option', name: option.id,
+                    placeholder: 'Type your Option', id: option.elementID }),
                 React.createElement(
                     'strong',
                     { className: 'peopleVoted', style: { display: 'none' } },
@@ -145,6 +230,7 @@ $(document).ready(function () {
     var running = false;
     var firstTimeRun = true;
     var id = 0;
+    var drawPulse = pulse();
     var drawPolls = drawPoll(content);
 
     function updatePoll(poll) {
@@ -234,6 +320,8 @@ $(document).ready(function () {
                 listeners.push({ value: content[i].value, id: content[i].id });
             }
             if (firstTimeRun) {
+                drawPulse.updateVotePulse("#votingPulse", 400, 100, 280);
+                drawPulse.updateChatPulse("#chatPulse", 400, 100, 280);
                 firstTimeRun = false;
                 $.getJSON('/get/id', function (data) {
                     data = JSON.parse(data);
@@ -265,6 +353,7 @@ $(document).ready(function () {
         }
     });
     client.on('chat', function (channel, userstate, message, self) {
+        drawPulse.totalChat++;
         var messageArr = message.split(' ');
         for (var i = 0, length = listeners.length; i < length; i++) {
             if (messageArr.indexOf(listeners[i].value) !== -1) {
@@ -280,6 +369,8 @@ $(document).ready(function () {
                             return false;
                         }
                     });
+                    totalVotes++;
+                    drawPulse.totalVotes++;
                     content[indexOfOption].peopleVoted++;
                     updatePoll(content);
                     ReactDOM.render(React.createElement(Option, { options: content }), document.getElementById('poll'));
@@ -289,7 +380,7 @@ $(document).ready(function () {
     });
 });
 
-},{"./auth.js":1,"./drawPoll.js":2,"url":8}],4:[function(require,module,exports){
+},{"./auth.js":1,"./drawPoll.js":2,"./drawPulse.js":3,"url":9}],5:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -826,7 +917,7 @@ $(document).ready(function () {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -912,7 +1003,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -999,13 +1090,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":5,"./encode":6}],8:[function(require,module,exports){
+},{"./decode":6,"./encode":7}],9:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1739,7 +1830,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":9,"punycode":4,"querystring":7}],9:[function(require,module,exports){
+},{"./util":10,"punycode":5,"querystring":8}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1757,4 +1848,4 @@ module.exports = {
   }
 };
 
-},{}]},{},[3]);
+},{}]},{},[4]);

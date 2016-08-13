@@ -28,11 +28,11 @@ function drawPoll(poll) {
     var pieDim = { w: 250, h: 250 };
     var votes = [];
     var piesvg = d3.select('#pie').append('svg').attr('height', '400').attr('width', '500').append('g').attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
-    var arc = d3.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
-    var pie = d3.pie().value(function (d) {
+    var arc = d3.svg.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
+    var pie = d3.layout.pie().value(function (d) {
         return d;
     });
-    var colors = d3.scaleOrdinal(d3.schemeCategory10);
+    var colors = d3.scale.category10();
     function arcTween(a) {
         var i = d3.interpolate(this._current, a);
         this._current = i(0);

@@ -1,8 +1,11 @@
 var url = require('url');
 var auth = require('./auth.js');
-var drawPoll = require("./drawPoll.js")
+var drawPoll = require("./drawPoll.js");
+var pulse = require("./drawPulse.js");
 var pollID;
 var socket = io();
+var totalChat = 0;
+var totalVotes = 0;
 var options = {
         options: {
             debug: true
@@ -21,7 +24,8 @@ var client = tmi.client(options);
 auth();
 
 const Option = (props) => <div>{props.options.map(function(option) {
-    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} placeholder={'Type your Option'} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
+    return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} 
+    placeholder={'Type your Option'} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
 
 
 $(document).ready(function() {
@@ -32,6 +36,7 @@ $(document).ready(function() {
     var running = false;
     var firstTimeRun = true;
     var id = 0;
+    var drawPulse = pulse();
     var drawPolls = drawPoll(content);
     
     function updatePoll(poll) {
@@ -119,6 +124,8 @@ $(document).ready(function() {
                 listeners.push({value: content[i].value, id: content[i].id});
             }
             if(firstTimeRun) {
+                drawPulse.updateVotePulse("#votingPulse", 400, 100, 280);
+                drawPulse.updateChatPulse("#chatPulse", 400, 100, 280);
                 firstTimeRun = false;
                 $.getJSON('/get/id', function(data) {
                     data = JSON.parse(data);
@@ -150,6 +157,7 @@ $(document).ready(function() {
         }
     });
     client.on('chat', function(channel, userstate, message, self){
+        drawPulse.totalChat++;
         var messageArr = message.split(' ');
         for(var i = 0, length = listeners.length; i < length; i++) {
             if(messageArr.indexOf(listeners[i].value) !== -1) {//if message contains the option
@@ -162,6 +170,8 @@ $(document).ready(function() {
                             return false;
                         }
                     })
+                    totalVotes++;
+                    drawPulse.totalVotes++;
                     content[indexOfOption].peopleVoted++;
                     updatePoll(content);
                     ReactDOM.render(<Option options={content}/>, document.getElementById('poll'));

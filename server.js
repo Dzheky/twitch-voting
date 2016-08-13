@@ -136,7 +136,7 @@ app.get('/:channel', function(req, res) {
 
 //get next id for the new poll
 app.get('/get/id', function(req,res) {
-    var pollID
+    var pollID;
     mongo.connect(DBurl, function(err, db) {
         db.collection('polls').count({}, function(err, id) {
                     if(err) throw err;

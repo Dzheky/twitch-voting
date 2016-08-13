@@ -24,9 +24,8 @@
 }
 .gate + label {
   display: inline-block;
-  position: relative;
-  top: 0;
-  left: -455px;
+  position: absolute;
+  transform: translate(-450px);
   padding: 10px 15px;
   text-shadow: 0 1px 0 rgba(19, 74, 70, 0.4);
   background: #377d6a;
@@ -79,10 +78,10 @@ span:nth-child(2) .gate:active {
 }
 .gate:focus + label,
 .gate:active + label {
-  transform: rotate(-66deg);
+  transform: translateX(-450px) rotate(-66deg);
   border-radius: 3px;
 }
 .gate:focus + label:before,
 .gate:active + label:before {
-  transform: rotate(10deg);
+  transform: translateX(-450px) rotate(10deg);
 }

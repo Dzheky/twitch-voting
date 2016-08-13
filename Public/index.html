@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name=viewport content='width=515'>
     <title>Twitch Voting</title>
     <script src="./js/socket.io-1.4.5.js"></script>
     <script src="./js/jquery-3.1.0.min.js"></script>
@@ -14,6 +15,7 @@
     <link href="./style/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="./style/index.css">
     <link rel="stylesheet" type="text/css" href="./style/inputStyle.css">
+    
 </head>
 <body>
     <div class="dashboard">
@@ -21,6 +23,7 @@
     </div>
     <div class="container">
         <div class="row">
+            <div id="channelName"></div>
             <div class="col-xs-12 text-center" id='inputField'>
                 <input class='gate' type="text" name="question" id='question' autocomplete="off" placeholder="Question!"/>
                 <label for="question">Question</label>
@@ -28,11 +31,12 @@
                 <button type='button' class="button" id='startPoll'>Start Poll</button>
                 <button type='button' class="button" id='stopPoll'>Stop Poll</button>
             </div>
-            <div class="col-sm-6 col-xs-12" id='pie'></div>
-            <div class="col-sm-6 col-xs-12" id='diag'>
+            <div class="col-md-6 col-xs-12" id='pie'></div>
+            <div class="col-md-6 col-xs-12" id='diag'>
+                <div id="votingPulseTitle"></div>
                 <div id="votingPulse"></div>
+                <div id="chatPulseTitle"></div>
                 <div id="chatPulse"></div>
-                <div id="graph1"></div>
             </div>
         </div>
     </div>

@@ -27,7 +27,7 @@ function drawPoll(poll) {
     };
     var pieDim = { w: 250, h: 250 };
     var votes = [];
-    var piesvg = d3.select('#pie').append('svg').attr('height', '400').attr('width', '500').append('g').attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
+    var piesvg = d3.select('#pie').append('svg').attr('height', '250').attr('width', '500').append('g').attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
     var arc = d3.svg.arc().outerRadius(pieDim.w / 2 - 10).innerRadius(0);
     var pie = d3.layout.pie().value(function (d) {
         return d;
@@ -102,9 +102,11 @@ function pulse() {
 		votes: [0]
 	};
 	function displayVotes(id, width, height, updateDelay) {
-		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
+		var graph = d3.select(id).append("svg:svg").attr("width", "450").attr("height", "150");
+		graph.append('text').text('Total Votes: ' + pulseObj.totalVotes).attr('class', 'totalVotes').attr('x', 0).attr('y', 10).attr('fill', 'black');
+		d3.select('#votingPulseTitle').html('Voting Pulse');
 
-		var dataOne = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+		var dataOne = [75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75];
 
 		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
 		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
@@ -118,13 +120,15 @@ function pulse() {
 
 		function redrawWithAnimation() {
 			graph.selectAll("path").data([dataOne]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease('linear').attr("transform", "translate(" + x(0) + ")");
+
+			graph.select('.totalVotes').text('Total Votes: ' + pulseObj.totalVotes);
 		}
 
 		setInterval(function () {
 			var i = pulseObj.votes.length - 1;
-			var nextVar = 50;
+			var nextVar = 75;
 			if (pulseObj.totalVotes - pulseObj.votes[i] !== 0) {
-				nextVar = Math.floor(Math.random() * 90 + 1);
+				nextVar = Math.floor(Math.random() * 110 + 30);
 				pulseObj.votes.push(pulseObj.totalVotes);
 			}
 			dataOne.shift();
@@ -134,8 +138,13 @@ function pulse() {
 	}
 
 	function displayChat(id, width, height, updateDelay) {
-		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
-		var dataTwo = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+		var graph = d3.select(id).append("svg:svg").attr("width", "450").attr("height", "150");
+
+		graph.append('text').text('Total Chat Messages: ' + pulseObj.totalChat).attr('class', 'totalChat').attr('x', 0).attr('y', 10).attr('fill', 'black');
+
+		d3.select('#chatPulseTitle').html('Chat Pulse');
+
+		var dataTwo = [75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75];
 
 		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
 		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
@@ -149,13 +158,15 @@ function pulse() {
 
 		function redrawWithAnimation() {
 			graph.selectAll("path").data([dataTwo]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease("linear").attr("transform", "translate(" + x(0) + ")");
+
+			graph.select('.totalChat').text('Total Chat Messages: ' + pulseObj.totalChat);
 		}
 
 		setInterval(function () {
 			var i = pulseObj.chat.length - 1;
-			var nextVar = 50;
+			var nextVar = 75;
 			if (pulseObj.totalChat - pulseObj.chat[i] !== 0) {
-				nextVar = Math.floor(Math.random() * 90 + 1);
+				nextVar = Math.floor(Math.random() * 110 + 30);
 				pulseObj.chat.push(pulseObj.totalChat);
 			}
 			dataTwo.shift();
@@ -192,6 +203,10 @@ var options = {
     channels: []
 };
 var channel = url.parse(window.location.href).pathname.split('/')[1];
+$.getJSON('https://api.twitch.tv/kraken/users/' + channel, function (data) {
+    $('#channelName').html(data.display_name);
+    console.log(data);
+});
 options.channels.push(channel);
 var client = tmi.client(options);
 
@@ -214,7 +229,7 @@ var Option = function Option(props) {
                     placeholder: 'Type your Option', id: option.elementID }),
                 React.createElement(
                     'strong',
-                    { className: 'peopleVoted', style: { display: 'none' } },
+                    { className: 'peopleVoted', style: { display: 'none', position: 'absolute', transform: 'translateY(+25px)' } },
                     option.peopleVoted
                 )
             );
@@ -306,7 +321,13 @@ $(document).ready(function () {
 
     $("#poll").on('keyup', '.option', function () {
         var name = +$(this).attr('name');
-        content[name].value = $(this).val();
+        var index = content.findIndex(function (element) {
+            if (element.id == name) {
+                return true;
+            }
+        });
+        console.log(index);
+        content[index].value = $(this).val();
     });
     $('#startPoll').click(function () {
         if (!running) {

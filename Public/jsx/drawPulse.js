@@ -8,9 +8,17 @@ function pulse () {
         votes: [0]
     }
     function displayVotes(id, width, height, updateDelay) {
-		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
-		
-        var dataOne = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50];
+		var graph = d3.select(id).append("svg:svg").attr("width", "450").attr("height", "150");
+		graph.append('text')
+			.text('Total Votes: '+pulseObj.totalVotes)
+			.attr('class', 'totalVotes')
+			.attr('x', 0)
+			.attr('y', 10)
+			.attr('fill', 'black');
+		d3.select('#votingPulseTitle')
+			.html('Voting Pulse');
+			
+        var dataOne = [75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75];
 		
 		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
 		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
@@ -33,13 +41,16 @@ function pulse () {
 					.transition()
 					.ease('linear')
 					.attr("transform", "translate(" + x(0) + ")");
+					
+				graph.select('.totalVotes')
+					.text('Total Votes: '+pulseObj.totalVotes);
 			}
 			
 			setInterval(function() {
 			    var i = pulseObj.votes.length-1;
-			    var nextVar = 50;
+			    var nextVar = 75;
 			    if(pulseObj.totalVotes - pulseObj.votes[i] !== 0) {
-			        nextVar = Math.floor((Math.random() * 90) + 1);
+			        nextVar = Math.floor((Math.random() * 110) + 30);
 			        pulseObj.votes.push(pulseObj.totalVotes);
 			    }
 			    dataOne.shift();
@@ -50,8 +61,19 @@ function pulse () {
 
 
 	function displayChat(id, width, height, updateDelay) {
-		var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
-        var dataTwo = [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50];
+		var graph = d3.select(id).append("svg:svg").attr("width", "450").attr("height", "150");
+        
+        graph.append('text')
+			.text('Total Chat Messages: '+pulseObj.totalChat)
+			.attr('class', 'totalChat')
+			.attr('x', 0)
+			.attr('y', 10)
+			.attr('fill', 'black');
+        
+        d3.select('#chatPulseTitle')
+			.html('Chat Pulse');
+			
+        var dataTwo = [75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75];
 		
 		var x = d3.scale.linear().domain([0, 48]).range([-5, width]);
 		var y = d3.scale.linear().domain([0, 100]).range([0, height]);
@@ -74,13 +96,16 @@ function pulse () {
 					.transition()
 					.ease("linear")
 					.attr("transform", "translate(" + x(0) + ")");
+					
+				graph.select('.totalChat')
+					.text('Total Chat Messages: '+pulseObj.totalChat);
 			}
 			
 			setInterval(function() {
 			    var i = pulseObj.chat.length-1;
-			    var nextVar = 50;
+			    var nextVar = 75;
 			    if(pulseObj.totalChat - pulseObj.chat[i] !== 0) {
-			        nextVar = Math.floor((Math.random() * 90) + 1);
+			        nextVar = Math.floor((Math.random() * 110) + 30);
 			        pulseObj.chat.push(pulseObj.totalChat);
 			    }
 			    dataTwo.shift();

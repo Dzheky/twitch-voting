@@ -1,15 +1,47 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,700,500);
-
+body {
+    overflow-x: hidden;
+    min-width: 480px;
+}
 .arc path {
           stroke: #fff;
           stroke-width: 2;
 }
-
+.row {
+    text-align: center;
+}
 .dashboard {
     background-color: #377D6A;
     height: 60px;
     width: 100%;
     text-align: right;
+}
+#channelName {
+    padding: 20px;
+    font-family: "Open Sans", sans-serif;
+    min-height: 147px;
+    font-weight: 100;
+    font-size: 65px;
+    color: #377d6a;
+    text-shadow: 0 1px 10px rgb(76, 113, 91);
+}
+#diag {
+    text-align: center;
+}
+
+.totalChat, .totalVotes {
+    font-size: 10px;
+    font-family: "Open Sans", sans-serif;
+    color: #3c5847;
+}
+#votingPulseTitle, #chatPulseTitle {
+    font-size: 22px;
+    font-weight: 100;
+    font-family: "Open Sans", sans-serif;
+    color: #3c5847;
+}
+#pie {
+    text-align: center;
 }
 
 
@@ -19,12 +51,14 @@ html, body {
 
 #inputField {
     white-space: nowrap;
-    padding-top: 100px;
+    padding-top: 20px;
     padding-bottom: 25px;
 }
-#question {
-    margin-left: 98px;
+.poeopleVoted {
+    position: fixed;
+    transform: translateY(+25px);
 }
+
 input[class='option'] {
     font-family: "Open Sans", sans-serif;
     width: 350px;
@@ -151,7 +185,7 @@ button#twitchLogin:hover {
 }
 
 #chatPulse path {
-	stroke: #1b70e0;
+	stroke: #9e2727;
   stroke-width: 2;
   fill: none;
 }

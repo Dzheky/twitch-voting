@@ -17,6 +17,10 @@ var options = {
         channels: []
     }
 var channel = url.parse(window.location.href).pathname.split('/')[1];
+$.getJSON('https://api.twitch.tv/kraken/users/'+channel, function(data) {
+    $('#channelName').html(data.display_name)
+    console.log(data);
+})
 options.channels.push(channel);
 var client = tmi.client(options);
 
@@ -25,7 +29,7 @@ auth();
 
 const Option = (props) => <div>{props.options.map(function(option) {
     return <div key={option.id}><span className={option.elementID} name={option.id} style={{cursor: 'pointer'}} id='delete'>X  </span><input type="text" className='option' name={option.id} 
-    placeholder={'Type your Option'} id={option.elementID}/><strong className='peopleVoted' style={{display:'none'}}>{option.peopleVoted}</strong></div>})}</div>;
+    placeholder={'Type your Option'} id={option.elementID}/><strong className='peopleVoted' style={{display:'none', position: 'absolute', transform:'translateY(+25px)'}}>{option.peopleVoted}</strong></div>})}</div>;
 
 
 $(document).ready(function() {
@@ -110,7 +114,13 @@ $(document).ready(function() {
     
     $("#poll").on('keyup','.option', function() {
         var name = +$(this).attr('name');
-        content[name].value = $(this).val();
+        var index = content.findIndex(function(element){
+            if(element.id == name) {
+                return true;
+            }
+        })
+        console.log(index);
+        content[index].value = $(this).val();
     }); 
     $('#startPoll').click(function() {
         if(!running) {

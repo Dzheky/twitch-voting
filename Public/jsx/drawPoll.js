@@ -6,7 +6,7 @@ function drawPoll(poll) {
     var pieDim ={w:250, h: 250};
     var votes = [];
     var piesvg = d3.select('#pie').append('svg')
-        .attr('height', '400')
+        .attr('height', '250')
         .attr('width', '500')
         .append('g')
         .attr('transform', 'translate('+pieDim.w/2+','+pieDim.h/2+')');

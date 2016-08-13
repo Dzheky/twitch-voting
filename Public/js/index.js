@@ -119,7 +119,7 @@ function pulse() {
 		graph.append("svg:path").attr("d", line(dataOne));
 
 		function redrawWithAnimation() {
-			graph.selectAll("path").data([dataOne]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease('linear').attr("transform", "translate(" + x(0) + ")");
+			graph.selectAll("path").data([dataOne]).attr("transform", "translate(" + x(1) + ")").attr("d", line).transition().ease('basis').attr("transform", "translate(" + x(0) + ")");
 
 			graph.select('.totalVotes').text('Total Votes: ' + pulseObj.totalVotes);
 		}
@@ -128,8 +128,11 @@ function pulse() {
 			var i = pulseObj.votes.length - 1;
 			var nextVar = 75;
 			if (pulseObj.totalVotes - pulseObj.votes[i] !== 0) {
-				nextVar = Math.floor(Math.random() * 110 + 30);
+				nextVar = Math.floor(Math.random() * (50 - 10 + 1) + 10);
 				pulseObj.votes.push(pulseObj.totalVotes);
+			}
+			if (dataOne[dataOne.length - 1] < 75) {
+				nextVar = Math.floor(Math.random() * (130 - 90 + 1) + 90);
 			}
 			dataOne.shift();
 			dataOne.push(nextVar);
@@ -166,8 +169,11 @@ function pulse() {
 			var i = pulseObj.chat.length - 1;
 			var nextVar = 75;
 			if (pulseObj.totalChat - pulseObj.chat[i] !== 0) {
-				nextVar = Math.floor(Math.random() * 110 + 30);
+				nextVar = Math.floor(Math.random() * (50 - 10 + 1) + 10);
 				pulseObj.chat.push(pulseObj.totalChat);
+			}
+			if (dataTwo[dataTwo.length - 1] < 75) {
+				nextVar = Math.floor(Math.random() * (130 - 90 + 1) + 90);
 			}
 			dataTwo.shift();
 			dataTwo.push(nextVar);

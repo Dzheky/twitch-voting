@@ -19,7 +19,6 @@ var options = {
 var channel = url.parse(window.location.href).pathname.split('/')[1];
 $.getJSON('https://api.twitch.tv/kraken/users/'+channel, function(data) {
     $('#channelName').html(data.display_name)
-    console.log(data);
 })
 options.channels.push(channel);
 var client = tmi.client(options);
@@ -119,7 +118,6 @@ $(document).ready(function() {
                 return true;
             }
         })
-        console.log(index);
         content[index].value = $(this).val();
     }); 
     $('#startPoll').click(function() {

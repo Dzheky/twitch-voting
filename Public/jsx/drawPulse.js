@@ -50,7 +50,7 @@ function pulse () {
 			    var i = pulseObj.votes.length-1;
 			    var nextVar = 75;
 			    if(pulseObj.totalVotes - pulseObj.votes[i] !== 0) {
-			    	nextVar = Math.floor(Math.random()*(50-10+1)+10);
+			    	nextVar = Math.floor(Math.random()*(50-20+1)+20);
 			        pulseObj.votes.push(pulseObj.totalVotes);
 			    }
 			    if(dataOne[dataOne.length-1] < 75) {
@@ -108,7 +108,7 @@ function pulse () {
 			    var i = pulseObj.chat.length-1;
 			    var nextVar = 75;
 			    if(pulseObj.totalChat - pulseObj.chat[i] !== 0) {
-			    	nextVar = Math.floor(Math.random()*(50-10+1)+10);
+			    	nextVar = Math.floor(Math.random()*(50-20+1)+20);
 			        pulseObj.chat.push(pulseObj.totalChat);
 			    }
 			    if(dataTwo[dataTwo.length-1] < 75) {

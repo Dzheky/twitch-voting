@@ -1,8 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,700,500);
-body {
-    overflow-x: hidden;
-    min-width: 480px;
-}
+
 .arc path {
           stroke: #fff;
           stroke-width: 2;
@@ -47,6 +44,7 @@ body {
 
 html, body {
     background: #7ab893;
+    overflow-x: hidden;
 }
 
 #inputField {

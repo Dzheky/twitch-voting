@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <title>Twich Voting</title>
     <link rel="stylesheet" href="./style/bootstrap.min.css">
+    <link rel="stylesheet" href="./style/channel.css" type="text/css" />
 </head>
 <body>
+    <div class="dashboard">
+            <button type='button' class='button' id='twitchLogin' style='display: none;'>Login</button>    
+    </div>
     <div class="container">
         <div class="row">
-            <div class="col-sm-6 col-sm-offset-3">
-                <label for="channelName">Channel Name:</label>
+            <div class="col-sm-6 col-sm-offset-3" id='inputBlock'>
+                <label for="channelName" id='inputBlockTitle'>Enter Twitch Channel</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="channelName" aria-describedby="channelEnter" placeholder="Enter Channel Name">
                     <span class="input-group-btn">

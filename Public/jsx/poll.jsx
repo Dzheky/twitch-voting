@@ -21,6 +21,14 @@ $.getJSON('/get/'+id, function(data) {
         var ol = d3.select("#options").append('ol')
         function update(dat) {
             drawPolls.updatePie(dat);
+            var total = [];
+            dat.polls.map(function(element) {
+                total.push(element.peopleVoted);
+            })
+            total = total.reduce(function(pre, curr) {
+                return pre+curr;
+            })
+            console.log(total);
             d3.select('#question')
                 .text(function() {
                     return dat.question
@@ -28,19 +36,16 @@ $.getJSON('/get/'+id, function(data) {
            var x = ol.selectAll('li').data(dat.polls);
            
                 x.attr('class', 'update');
-                x.text(function(element) {
-                    return element.value + "    "+element.peopleVoted;
+                x.html(function(element) {
+                    return element.value + "    <span id='percent'>"+(element.peopleVoted/total*100).toFixed(1)+"%</span>";
                 })
                 x.enter().append('li')
-                .text(function(element) {
-                    return element.value + "    "+element.peopleVoted;
+                .html(function(element) {
+                    return element.value + "    <span id='percent'>"+(element.peopleVoted/total*100).toFixed(1)+"%</span>";
                 })
                 
                 x.exit().remove();
 
-                // .selectAll('li')
-                // .data(data.poll)
-                // .enter().append('span').html('hello world');
         }
         update(data.polls);
         socket.on('poll'+id, function(data) {

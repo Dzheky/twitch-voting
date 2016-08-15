@@ -45,7 +45,6 @@ function drawPoll(poll) {
         votes = poll.polls.map(function (data) {
             return data.peopleVoted;
         });
-        console.log(votes);
         var pies = piesvg.selectAll("path").data(pie(votes));
         var legend = piesvg.selectAll('g').data(poll.polls);
 

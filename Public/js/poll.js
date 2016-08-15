@@ -45,7 +45,6 @@ function drawPoll(poll) {
         votes = poll.polls.map(function (data) {
             return data.peopleVoted;
         });
-        console.log(votes);
         var pies = piesvg.selectAll("path").data(pie(votes));
         var legend = piesvg.selectAll('g').data(poll.polls);
 
@@ -113,24 +112,28 @@ $.getJSON('/get/' + id, function (data) {
         (function () {
             var update = function update(dat) {
                 drawPolls.updatePie(dat);
+                var total = [];
+                dat.polls.map(function (element) {
+                    total.push(element.peopleVoted);
+                });
+                total = total.reduce(function (pre, curr) {
+                    return pre + curr;
+                });
+                console.log(total);
                 d3.select('#question').text(function () {
                     return dat.question;
                 });
                 var x = ol.selectAll('li').data(dat.polls);
 
                 x.attr('class', 'update');
-                x.text(function (element) {
-                    return element.value + "    " + element.peopleVoted;
+                x.html(function (element) {
+                    return element.value + "    <span id='percent'>" + (element.peopleVoted / total * 100).toFixed(1) + "%</span>";
                 });
-                x.enter().append('li').text(function (element) {
-                    return element.value + "    " + element.peopleVoted;
+                x.enter().append('li').html(function (element) {
+                    return element.value + "    <span id='percent'>" + (element.peopleVoted / total * 100).toFixed(1) + "%</span>";
                 });
 
                 x.exit().remove();
-
-                // .selectAll('li')
-                // .data(data.poll)
-                // .enter().append('span').html('hello world');
             };
 
             $('#question').html(data.question);

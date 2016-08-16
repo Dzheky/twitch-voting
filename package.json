@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "watch": "npm run watch-index & npm run watch-poll & npm run watch-channel & npm run watch-dashboard",
     "watch-index": "watchify Public/jsx/index.jsx -v -o Public/js/index.js -t [ babelify --presets [ es2015 react ] ]",
     "watch-poll": "watchify Public/jsx/poll.jsx -v -o Public/js/poll.js -t [ babelify --presets [ es2015 react ] ]",
-    "watch-channel": "watchify Public/jsx/channel.jsx -v -o Public/js/channel.js -t [ babelify --presets [ es2015 react ] ]"
+    "watch-channel": "watchify Public/jsx/channel.jsx -v -o Public/js/channel.js -t [ babelify --presets [ es2015 react ] ]",
+    "watch-dashboard": "watchify Public/jsx/dashboard.jsx -v -o Public/js/dashboard.js -t [ babelify --presets [ es2015 react ] ]"
   },
   "repository": {
     "type": "git",

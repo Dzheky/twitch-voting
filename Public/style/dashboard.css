@@ -1,0 +1,73 @@
+.dashboard {
+    background-color: #377D6A;
+    height: 60px;
+    width: 100%;
+    text-align: right;
+}
+html, body {
+    background: #7ab893;
+    overflow-x: hidden;
+}
+.button {
+    font-family: "Roboto", sans-serif;
+    display: inline;
+    overflow: hidden;
+    margin: 10px;
+    padding: 10px 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transition: all 60ms ease-in-out;
+    transition: all 60ms ease-in-out;
+    text-align: center;
+    white-space: nowrap;
+    text-decoration: none !important;
+    text-transform: none;
+    text-transform: capitalize;
+    color: #fff;
+    border: 0 none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.3;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 160px;
+          -ms-flex: 0 0 160px;
+              flex: 0 0 160px;
+}
+.button:hover {
+    -webkit-transition: all 60ms ease;
+    transition: all 60ms ease;
+    opacity: .65;
+}
+.button:active {
+    -webkit-transition: all 60ms ease;
+    transition: all 60ms ease;
+    opacity: .55;
+}
+.button:focus {
+    outline: 1px dotted #959595;
+    outline-offset: -4px;
+}
+#twitchLogin {
+    color: #7ab893;
+    background: #377d6a;
+    border: 1px solid #7ab893;
+}
+button#twitchLogin:hover {
+    background: #a0f1c0;
+    color: #377d6a;
+}

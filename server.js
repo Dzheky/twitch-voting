@@ -26,6 +26,7 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     query = query.map(function(element) {
         return element.split('=')[1];
     });
+    console.log('response url: '+req.session.url)
     if(query[2] == 'test') {
         request({
             url: 'https://api.twitch.tv/kraken/oauth2/token',
@@ -75,6 +76,20 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     }
     
 });
+
+app.get('/dashboard', function(req, res) {
+    if(req.session.name) {
+        req.session.url = req.protocol + 's://' + req.get('host') + req.originalUrl;
+        res.sendFile(__dirname + '/Public/dashboard.html');
+    } else {
+        var fullUrl = req.protocol + '://' + req.get('host').split(':')[0];
+        console.log(req.get('host'));
+        res.writeHead(301,
+          {Location: fullUrl}
+        );
+        res.end();
+    }
+})
 
 
 //check if user is authenticated
@@ -180,6 +195,7 @@ app.get('/id/:id', function(req, res) {
 
 //main page
 app.get('/', function(req,res) {
+    req.session.url = req.protocol + 's://' + req.get('host') + req.originalUrl;
     res.sendFile(__dirname + '/Public/channel.html');
 });
 

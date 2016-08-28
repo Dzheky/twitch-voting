@@ -77,6 +77,7 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     
 });
 
+//is auth then you will get send to your dashboard
 app.get('/dashboard', function(req, res) {
     if(req.session.name) {
         req.session.url = req.protocol + 's://' + req.get('host') + req.originalUrl;

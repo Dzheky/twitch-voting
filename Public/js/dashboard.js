@@ -22,6 +22,48 @@ module.exports = auth;
 
 require('./auth.js')();
 
-$(document).ready(function () {});
+$(document).ready(function () {
+    var Poll = React.createClass({
+        displayName: 'Poll',
+
+        render: function render() {
+            return React.createElement(
+                'div',
+                { className: 'poll' },
+                React.createElement(
+                    'div',
+                    { className: 'question' },
+                    this.props.question
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'options' },
+                    this.props.options.forEach(function (element) {
+                        return React.createElement(
+                            'div',
+                            { className: 'option' },
+                            element.value + ' ' + element.peopleVoted
+                        );
+                    })
+                )
+            );
+        }
+    });
+
+    var Polls = React.createClass({
+        displayName: 'Polls',
+
+        render: function render() {
+            return React.createElement(
+                'div',
+                { className: 'polls' },
+                this.props.polls.forEach(function (element) {
+                    return React.createElement(Poll, { question: element.question,
+                        options: element.polls });
+                })
+            );
+        }
+    });
+});
 
 },{"./auth.js":1}]},{},[2]);

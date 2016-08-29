@@ -77,6 +77,23 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     
 });
 
+//get polls based on name
+app.get('/dashboard/:name', function(req, res) {
+    if(req.session.name) {
+         mongo.connect(DBurl, function(err, db) {
+            if(err) throw err;
+            var users = db.collection('users');
+            var polls = db.collection('polls');
+            users.find(req.params.name)
+            //////////////////////////////////////////////////////////////////
+            
+         });
+    } else {
+        res.end();
+    }
+})
+
+
 //is auth then you will get send to your dashboard
 app.get('/dashboard', function(req, res) {
     if(req.session.name) {

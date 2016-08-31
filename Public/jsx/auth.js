@@ -12,7 +12,10 @@ function auth() {
             '&state=test';
             });
         } else {
-            return true;
+            $('#dashboard').show();
+            $('#dashboard').click(function() {
+                window.location.href = '/dashboard';
+            })
         }
     });
 }

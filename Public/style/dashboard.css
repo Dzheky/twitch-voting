@@ -71,3 +71,21 @@ button#twitchLogin:hover {
     background: #a0f1c0;
     color: #377d6a;
 }
+#dashboard {
+    color: #7ab893;
+    background: #377d6a;
+    border: 1px solid #7ab893;
+}
+button#dashboard:hover {
+    background: #a0f1c0;
+    color: #377d6a;
+}
+
+
+/*each poll*/
+.poll {
+    padding: 20px;
+}
+.polls {
+    text-align: center;
+}

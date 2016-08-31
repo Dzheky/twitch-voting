@@ -78,13 +78,27 @@ app.get('/auth/user', function(req, res) { //Authanticate user
 });
 
 //get polls based on name
-app.get('/dashboard/:name', function(req, res) {
+app.get('/dashboard/get', function(req, res) {
     if(req.session.name) {
          mongo.connect(DBurl, function(err, db) {
             if(err) throw err;
             var users = db.collection('users');
             var polls = db.collection('polls');
-            users.find(req.params.name)
+            users.findOne({ name: req.session.name}, function(err, user) {
+                if(err) throw err;
+                if(req.sessionID == user.sessionID) {
+                    var pollResult = polls.find({_id: {$in: user.polls}})
+                    var resultArray = null;
+                    pollResult.toArray(function(err, polls) {
+                        if(err) throw err;
+                        res.send({polls: polls})
+                        res.end();
+                    })
+                } else {
+                    res.send({error: 'something went wrong!'});
+                    res.end();
+                }
+            })
             //////////////////////////////////////////////////////////////////
             
          });

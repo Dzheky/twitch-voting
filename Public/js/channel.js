@@ -10,7 +10,10 @@ function auth() {
                 window.location.href = 'https://api.twitch.tv/kraken/oauth2/authorize' + '?response_type=code' + '&client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo' + '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user' + '&scope=user_read' + '&state=test';
             });
         } else {
-            return true;
+            $('#dashboard').show();
+            $('#dashboard').click(function () {
+                window.location.href = '/dashboard';
+            });
         }
     });
 }

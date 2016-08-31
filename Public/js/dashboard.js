@@ -10,7 +10,10 @@ function auth() {
                 window.location.href = 'https://api.twitch.tv/kraken/oauth2/authorize' + '?response_type=code' + '&client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo' + '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user' + '&scope=user_read' + '&state=test';
             });
         } else {
-            return true;
+            $('#dashboard').show();
+            $('#dashboard').click(function () {
+                window.location.href = '/dashboard';
+            });
         }
     });
 }
@@ -27,9 +30,19 @@ $(document).ready(function () {
         displayName: 'Poll',
 
         render: function render() {
+            var options = [];
+            this.props.options.forEach(function (element) {
+                options.push(React.createElement(
+                    'div',
+                    { className: 'option' },
+                    element.value + ' ' + element.peopleVoted
+                ));
+            });
+            console.log(this.props.question);
+            console.log(this.props.options);
             return React.createElement(
                 'div',
-                { className: 'poll' },
+                { className: 'col-xs-12 poll' },
                 React.createElement(
                     'div',
                     { className: 'question' },
@@ -38,13 +51,7 @@ $(document).ready(function () {
                 React.createElement(
                     'div',
                     { className: 'options' },
-                    this.props.options.forEach(function (element) {
-                        return React.createElement(
-                            'div',
-                            { className: 'option' },
-                            element.value + ' ' + element.peopleVoted
-                        );
-                    })
+                    options
                 )
             );
         }
@@ -54,15 +61,24 @@ $(document).ready(function () {
         displayName: 'Polls',
 
         render: function render() {
+            var options = [];
+            this.props.polls.forEach(function (element) {
+                options.push(React.createElement(Poll, { question: element.polls.question,
+                    options: element.polls.polls }));
+            });
+
             return React.createElement(
                 'div',
-                { className: 'polls' },
-                this.props.polls.forEach(function (element) {
-                    return React.createElement(Poll, { question: element.question,
-                        options: element.polls });
-                })
+                { className: 'container polls' },
+                options
             );
         }
+    });
+
+    $.getJSON('/dashboard/get', function (data) {
+        ReactDOM.render(React.createElement(Polls, { polls: data.polls }), document.getElementById('insertPolls'), function () {
+            console.log('done');
+        });
     });
 });
 

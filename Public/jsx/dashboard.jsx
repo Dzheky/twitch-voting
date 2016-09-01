@@ -6,19 +6,18 @@ $(document).ready(function() {
             var options = [];
             this.props.options
                               .forEach(function(element) {
-                                    options.push(<div className='option'>
-                                                    {element.value + ' ' + element.peopleVoted}
-                                                </div>)
+                                    options.push(<li className="list-group-item option">
+                                                        <span className="badge">{element.peopleVoted}</span>
+                                                        {element.value}
+                                                </li>)
                               })
-            console.log(this.props.question)
-            console.log(this.props.options)
-            return  <div className='col-xs-12 poll'>
+            return  <div className='col-sm-8 col-sm-offset-2 poll'>
                         <div className='question'>
                             {this.props.question}
                         </div>
-                        <div className='options'>
+                        <ul className="list-group options">
                             {options}
-                        </div>
+                        </ul>
                     </div>
         }
     })
@@ -26,13 +25,14 @@ $(document).ready(function() {
     var Polls = React.createClass({
         render: function() {
             var options = [];
+            console.log(this.props.polls);
             this.props.polls.forEach(function(element) {
-                                options.push( <Poll question={element.polls.question}
-                                            options={element.polls.polls} />)
+                                options.push( <a id={element._id} href={'/id/'+element._id}><Poll question={element.polls.question}
+                                            options={element.polls.polls} /></a>)
                             })
                             
             return  <div className='container polls'>
-                        {options}
+                            {options.reverse()}
                     </div>
         }
     })

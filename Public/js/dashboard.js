@@ -21,36 +21,39 @@ function auth() {
 module.exports = auth;
 
 },{}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 require('./auth.js')();
 
 $(document).ready(function () {
     var Poll = React.createClass({
-        displayName: 'Poll',
+        displayName: "Poll",
 
         render: function render() {
             var options = [];
             this.props.options.forEach(function (element) {
                 options.push(React.createElement(
-                    'div',
-                    { className: 'option' },
-                    element.value + ' ' + element.peopleVoted
+                    "li",
+                    { className: "list-group-item option" },
+                    React.createElement(
+                        "span",
+                        { className: "badge" },
+                        element.peopleVoted
+                    ),
+                    element.value
                 ));
             });
-            console.log(this.props.question);
-            console.log(this.props.options);
             return React.createElement(
-                'div',
-                { className: 'col-xs-12 poll' },
+                "div",
+                { className: "col-sm-8 col-sm-offset-2 poll" },
                 React.createElement(
-                    'div',
-                    { className: 'question' },
+                    "div",
+                    { className: "question" },
                     this.props.question
                 ),
                 React.createElement(
-                    'div',
-                    { className: 'options' },
+                    "ul",
+                    { className: "list-group options" },
                     options
                 )
             );
@@ -58,19 +61,24 @@ $(document).ready(function () {
     });
 
     var Polls = React.createClass({
-        displayName: 'Polls',
+        displayName: "Polls",
 
         render: function render() {
             var options = [];
+            console.log(this.props.polls);
             this.props.polls.forEach(function (element) {
-                options.push(React.createElement(Poll, { question: element.polls.question,
-                    options: element.polls.polls }));
+                options.push(React.createElement(
+                    "a",
+                    { id: element._id, href: '/id/' + element._id },
+                    React.createElement(Poll, { question: element.polls.question,
+                        options: element.polls.polls })
+                ));
             });
 
             return React.createElement(
-                'div',
-                { className: 'container polls' },
-                options
+                "div",
+                { className: "container polls" },
+                options.reverse()
             );
         }
     });

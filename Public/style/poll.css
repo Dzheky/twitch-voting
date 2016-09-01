@@ -13,10 +13,10 @@ html, body {
 #question {
     text-align: left;
     margin-top: 25px;
-    font-size: 50px;
-    font-weight: 200;
+    font-size: 4vmax;
+    font-weight: 800;
     font-family: "Open Sans", sans-serif;
-    color: #16332b;
+    color: #377d6a;
 }
 #options {
     margin: 20px;

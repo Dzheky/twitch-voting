@@ -99,8 +99,29 @@ app.get('/dashboard/get', function(req, res) {
                     res.end();
                 }
             })
-            //////////////////////////////////////////////////////////////////
-            
+         });
+    } else {
+        res.end();
+    }
+})
+
+
+//delte polls
+app.get('/delete/:id', function(req, res) {
+    if(req.session.name) {
+        mongo.connect(DBurl, function(err, db) {
+            if(err) throw err;
+            var users = db.collection('users');
+            var polls = db.collection('polls');
+            users.findOne({ name: req.session.name}, function(err, user) {
+                if(err) throw err;
+                if(req.sessionID == user.sessionID) {
+                    //add delition proccess
+                } else {
+                    res.send({error: 'something went wrong!'});
+                    res.end();
+                }
+            })
          });
     } else {
         res.end();

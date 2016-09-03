@@ -77,7 +77,7 @@ app.get('/auth/user', function(req, res) { //Authanticate user
     
 });
 
-//get polls based on name
+//get all polls crated by user
 app.get('/dashboard/get', function(req, res) {
     if(req.session.name) {
          mongo.connect(DBurl, function(err, db) {
@@ -106,7 +106,7 @@ app.get('/dashboard/get', function(req, res) {
 })
 
 
-//delte polls
+//delete polls
 app.get('/delete/:id', function(req, res) {
     if(req.session.name) {
         mongo.connect(DBurl, function(err, db) {
@@ -116,7 +116,11 @@ app.get('/delete/:id', function(req, res) {
             users.findOne({ name: req.session.name}, function(err, user) {
                 if(err) throw err;
                 if(req.sessionID == user.sessionID) {
-                    //add delition proccess
+                    polls.update({_id: parseInt(req.params.id)}, {_id: parseInt(req.params.id), deleted: true}, function(err) {
+                        if(err) console.log(err);
+                    })
+                    res.send({msg: 'done'});
+                    res.end();
                 } else {
                     res.send({error: 'something went wrong!'});
                     res.end();
@@ -208,7 +212,7 @@ app.get('/get/id', function(req,res) {
     mongo.connect(DBurl, function(err, db) {
         db.collection('polls').count({}, function(err, id) {
                     if(err) throw err;
-                    pollID = id;
+                    pollID = id+1;
                     if(req.session.name) {
                         db.collection('polls').insertOne({_id: pollID, data: 'placeholder'});
                         res.json(JSON.stringify({id: pollID}));
@@ -227,7 +231,7 @@ app.get('/get/:id', function(req,res) {
         var polls = db.collection('polls');
         polls.findOne({_id: +req.params.id}, function(err, poll) {
             if(err) throw err;
-            if(poll === null) {
+            if(poll === null || poll.deleted) {
                 res.json(JSON.stringify({err: 'this poll doesn\'t exist'}))
             } else {
                 res.json(JSON.stringify(poll));

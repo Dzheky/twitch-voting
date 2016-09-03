@@ -130,10 +130,10 @@ $.getJSON('/get/' + id, function (data) {
 
                 x.attr('class', 'update');
                 x.html(function (element) {
-                    return element.value + "    <span id='percent'>" + (element.peopleVoted / total * 100).toFixed(1) + "%</span>";
+                    return element.value + "    <span id='percent'>" + ((element.peopleVoted / total * 100).toFixed(1) ? (element.peopleVoted / total * 100).toFixed(1) : '0.00') + "%</span>";
                 });
                 x.enter().append('li').html(function (element) {
-                    return element.value + "    <span id='percent'>" + (element.peopleVoted / total * 100).toFixed(1) + "%</span>";
+                    return element.value + "    <span id='percent'>" + ((element.peopleVoted / total * 100).toFixed(1) ? (element.peopleVoted / total * 100).toFixed(1) : '0.00') + "%</span>";
                 });
 
                 x.exit().remove();

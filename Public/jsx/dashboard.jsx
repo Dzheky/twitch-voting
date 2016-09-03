@@ -27,8 +27,10 @@ $(document).ready(function() {
             var options = [];
             console.log(this.props.polls);
             this.props.polls.forEach(function(element) {
-                                options.push( <a id={element._id} href={'/id/'+element._id}><Poll question={element.polls.question}
-                                            options={element.polls.polls} /></a>)
+                                if(!element.deleted) {
+                                    options.push( <a id={element._id} href={'/id/'+element._id}><Poll question={element.polls.question}
+                                                options={element.polls.polls} /></a>)
+                                }
                             })
                             
             return  <div className='container polls'>

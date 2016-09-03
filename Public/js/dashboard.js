@@ -67,12 +67,14 @@ $(document).ready(function () {
             var options = [];
             console.log(this.props.polls);
             this.props.polls.forEach(function (element) {
-                options.push(React.createElement(
-                    "a",
-                    { id: element._id, href: '/id/' + element._id },
-                    React.createElement(Poll, { question: element.polls.question,
-                        options: element.polls.polls })
-                ));
+                if (!element.deleted) {
+                    options.push(React.createElement(
+                        "a",
+                        { id: element._id, href: '/id/' + element._id },
+                        React.createElement(Poll, { question: element.polls.question,
+                            options: element.polls.polls })
+                    ));
+                }
             });
 
             return React.createElement(

@@ -107,14 +107,30 @@ button#dashboard:hover {
 .polls {
     text-align: center;
 }
-a:link, a:visited { 
-    color: #16332b;
-    text-decoration: none;
-    cursor: auto;
+a, a:link, a:visited, a:hover, a:active {
+  color: inherit;
+  text-decoration: inherit;
+  font-weight: inherit;
 }
 
-a:link:active, a:visited:active { 
-    color: #16332b;
+#delete {
+    position: absolute;
+    right: 15px;
+    top: 3px;
+    font-size: 25px;
+    font-weight: 800;
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none;   
+    -khtml-user-select: none;    
+    -moz-user-select: none;      
+    -ms-user-select: none;       
+    user-select: none; 
+}
+
+#delete:hover {
+    -webkit-text-stroke: 1px #7ab893;
+    color: #377d6a;
+    cursor: pointer;
 }
 
 /*badge*/

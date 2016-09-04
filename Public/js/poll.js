@@ -127,13 +127,16 @@ $.getJSON('/get/' + id, function (data) {
                     return dat.question;
                 });
                 var x = ol.selectAll('li').data(dat.polls);
-
                 x.attr('class', 'update');
                 x.html(function (element) {
-                    return element.value + "    <span id='percent'>" + ((element.peopleVoted / total * 100).toFixed(1) ? (element.peopleVoted / total * 100).toFixed(1) : '0.00') + "%</span>";
+                    var percent = (element.peopleVoted / total * 100).toFixed(1);
+                    if (element.peopleVoted == 0) percent = '0.00';
+                    return element.value + "    <span id='percent'>" + percent + "%</span>";
                 });
                 x.enter().append('li').html(function (element) {
-                    return element.value + "    <span id='percent'>" + ((element.peopleVoted / total * 100).toFixed(1) ? (element.peopleVoted / total * 100).toFixed(1) : '0.00') + "%</span>";
+                    var percent = (element.peopleVoted / total * 100).toFixed(1);
+                    if (element.peopleVoted == 0) percent = '0.00';
+                    return element.value + "    <span id='percent'>" + percent + "%</span>";
                 });
 
                 x.exit().remove();

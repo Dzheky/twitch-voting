@@ -2,7 +2,20 @@ require('./auth.js')();
 
 $(document).ready(function() {
    var Poll = React.createClass({
+        getInitialState: function() {
+            return {visible: 'block'};
+        },
         render: function() {
+            var self = this;
+            function deleted() {
+                $.getJSON('/delete/'+self.props.id, function(result) {
+                    if(!result.msg) {
+                        alert(result.error);
+                    } else {
+                        self.setState({visible: 'none'});
+                    }
+                })
+            }
             var options = [];
             this.props.options
                               .forEach(function(element) {
@@ -11,10 +24,13 @@ $(document).ready(function() {
                                                         {element.value}
                                                 </li>)
                               })
-            return  <div className='col-sm-8 col-sm-offset-2 poll'>
-                        <div className='question'>
-                            {this.props.question}
-                        </div>
+            return  <div className='col-sm-8 col-sm-offset-2 poll' style={{display: this.state.visible}}>
+                        <div id='delete' onClick={deleted}>x</div>
+                        <a href={this.props.href} id={this.props.id}>
+                            <div className='question'>
+                                {this.props.question}
+                            </div>
+                        </a>
                         <ul className="list-group options">
                             {options}
                         </ul>
@@ -28,8 +44,8 @@ $(document).ready(function() {
             console.log(this.props.polls);
             this.props.polls.forEach(function(element) {
                                 if(!element.deleted) {
-                                    options.push( <a id={element._id} href={'/id/'+element._id}><Poll question={element.polls.question}
-                                                options={element.polls.polls} /></a>)
+                                    options.push(<Poll id={element._id} href={'/id/'+element._id} question={element.polls.question}
+                                                options={element.polls.polls} />)
                                 }
                             })
                             

@@ -184,6 +184,22 @@ button#dashboard:hover {
     color: #377d6a;
 }
 
+#logo {
+    position: absolute;
+    left: 19px;
+    top: 3px;
+    font-size: 35px;
+    font-weight: 800;
+    color: #377d6a;
+    -webkit-text-stroke: 1px #7ab893;
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none;   
+    -khtml-user-select: none;    
+    -moz-user-select: none;      
+    -ms-user-select: none;       
+    user-select: none; 
+}
+
 
 #votingPulse path {
    stroke: #1b70e0;

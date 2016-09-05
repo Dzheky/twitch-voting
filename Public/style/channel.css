@@ -16,10 +16,19 @@ html, body {
     font-family: "Open Sans", sans-serif;
 }
 #inputBlockTitle {
-    font-size: 50px;
+    font-size: 3vmax;
     font-weight: 200;
     margin-top: 50px;
     color: #377d6a;
+}
+input#channelName {
+    background: #377d6a;
+    border-color: #7ab893;
+    color: #7ab893;
+}
+button#submit {
+    background: #377d6a;
+    border-color: #7ab893;
 }
 
 
@@ -95,6 +104,22 @@ button#twitchLogin:hover {
 button#dashboard:hover {
     background: #a0f1c0;
     color: #377d6a;
+}
+
+#logo {
+    position: absolute;
+    left: 19px;
+    top: 3px;
+    font-size: 35px;
+    font-weight: 800;
+    color: #377d6a;
+    -webkit-text-stroke: 1px #7ab893;
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none;   
+    -khtml-user-select: none;    
+    -moz-user-select: none;      
+    -ms-user-select: none;       
+    user-select: none; 
 }
 
 

@@ -34,7 +34,7 @@ app.get('/auth/user', function(req, res) { //Authanticate user
             body:   'client_id=cunpu7mzq6sedmgw50ekiw7ga4u8npo'+
                     '&client_secret='+process.env.CLIENT_SECRET+
                     '&grant_type=authorization_code'+
-                    '&redirect_uri=https://voting-app-dzheky.c9users.io/auth/user'+
+                    '&redirect_uri=https://twitchvoting.herokuapp.com/auth/user'+
                     '&code='+query[0]+
                     '&state=test',
             headers: {

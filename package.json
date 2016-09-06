@@ -2,7 +2,7 @@
   "name": "twitch-poll",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "watch": "npm run watch-index & npm run watch-poll & npm run watch-channel & npm run watch-dashboard",

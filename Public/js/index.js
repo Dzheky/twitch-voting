@@ -211,7 +211,7 @@ var options = {
     channels: []
 };
 var channel = url.parse(window.location.href).pathname.split('/')[1];
-$.getJSON('https://api.twitch.tv/kraken/users/' + channel, function (data) {
+$.getJSON('https://api.twitch.tv/kraken/channels/' + channel, function (data) {
     $('#channelName').html(data.display_name);
 });
 options.channels.push(channel);
